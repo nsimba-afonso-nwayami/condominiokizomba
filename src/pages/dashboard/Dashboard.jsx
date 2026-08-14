@@ -1,19 +1,29 @@
-import { useMemo, useState } from "react";
-import { Link } from "react-router-dom";
+import { useEffect, useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Modal from "./components/Modal";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import toast from "react-hot-toast";
-
+import { formatDate, getToday } from "../../utils/dateUtils";
+import { logout } from "../../services/authService";
 import { qrcodeSchema } from "../../validations/qrcodeSchema";
+import { getEvents, createEvent } from "../../services/eventService";
+import { QRCodeCanvas } from "qrcode.react";
 
 export default function Dashboard() {
+  const navigate = useNavigate();
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const [search, setSearch] = useState("");
-  const [eventFilter, setEventFilter] = useState("");
-  const [locationFilter, setLocationFilter] = useState("");
   const [dateFilter, setDateFilter] = useState("today");
+  const [qrcodes, setQrcodes] = useState([]);
+  const [showHistory, setShowHistory] = useState(false);
+
+  const handleLogout = () => {
+    logout();
+    toast.success("Sessão terminada com sucesso.");
+    navigate("/login", { replace: true });
+  };
 
   const {
     register,
@@ -33,70 +43,40 @@ export default function Dashboard() {
     },
   });
 
-  const [qrcodes, setQrcodes] = useState([
-    {
-      id: 1,
-      morador: "João Manuel",
-      tipoEvento: "Aniversário/ Birthday",
-      data: "2026-08-13",
-      hora: "10:30",
-      horaFim: "13:00",
-      local: "Rés do chão",
-      convidados: "Pedro Manuel, Ana Costa e Carlos José",
-      qrCode:
-        "https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=KIZONMBA-001",
-    },
-    {
-      id: 2,
-      morador: "Maria José",
-      tipoEvento: "Reunião/Meeting",
-      data: "2026-08-13",
-      hora: "14:00",
-      horaFim: "18:00",
-      local: "Piso 01/ Floor 01",
-      convidados: "João Silva, Paulo António, Maria Clara",
-      qrCode:
-        "https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=KIZONMBA-002",
-    },
-    {
-      id: 3,
-      morador: "Carlos Pedro",
-      tipoEvento: "Palestras/Lectures",
-      data: "2026-08-12",
-      hora: "08:00",
-      horaFim: "12:00",
-      local: "Ginásio/ Gym",
-      convidados: "Miguel Santos e Luís Pedro",
-      qrCode:
-        "https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=KIZONMBA-003",
-    },
-    {
-      id: 4,
-      morador: "Ana Cristina",
-      tipoEvento: "Jogos/ Games",
-      data: "2026-08-08",
-      hora: "15:00",
-      horaFim: "18:00",
-      local: "Campo Padel/ Padel court",
-      convidados: "Ricardo, Bruno, André e Filipe",
-      qrCode:
-        "https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=KIZONMBA-004",
-    },
-    {
-      id: 5,
-      morador: "Paulo Manuel",
-      tipoEvento: "Aulas para criança/ Classes for children",
-      data: "2026-08-03",
-      hora: "09:00",
-      horaFim: "11:00",
-      local: "Campo de Futebol/FootBall Court",
-      convidados: "Mário, João, Lucas e Pedro",
-      qrCode:
-        "https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=KIZONMBA-005",
-    },
-  ]);
+  useEffect(() => {
+    const fetchEvents = async () => {
+      try {
+        const data = await getEvents();
 
-  const today = "2026-08-13";
+        console.log("EVENTOS RETORNADOS PELA API:", data);
+        console.log("PRIMEIRO EVENTO:", data[0]);
+
+        const normalizedEvents = data.map((item) => ({
+          id: item.id,
+          morador: item.morador,
+          tipoEvento: item.tipo_evento,
+          data: item.data_evento,
+          hora: item.hora_inicio,
+          horaFim: item.hora_fim,
+          local: item.local,
+          convidados: item.convidado,
+        }));
+
+        console.log("EVENTOS NORMALIZADOS:", normalizedEvents);
+
+        setQrcodes(normalizedEvents);
+      } catch (error) {
+        console.error("ERRO AO BUSCAR EVENTOS:", error);
+        console.error("RESPOSTA DA API:", error.response?.data);
+
+        toast.error("Não foi possível carregar os eventos.");
+      }
+    };
+
+    fetchEvents();
+  }, []);
+
+  const today = getToday();
 
   const qrcodesHoje = qrcodes.filter((item) => item.data === today);
 
@@ -196,66 +176,80 @@ export default function Dashboard() {
   };
 
   const filteredQrcodes = useMemo(() => {
-    return qrcodes.filter((item) => {
-      const searchValue = search.toLowerCase();
+    const searchValue = search.trim().toLowerCase();
 
-      const matchesSearch =
-        item.morador.toLowerCase().includes(searchValue) ||
-        item.local.toLowerCase().includes(searchValue) ||
-        item.convidados.toLowerCase().includes(searchValue);
+    return qrcodes
+      .filter((item) => {
+        const morador = item.morador?.toLowerCase() || "";
+        const local = item.local?.toLowerCase() || "";
+        const convidados = item.convidados?.toLowerCase() || "";
+        const tipoEvento = item.tipoEvento?.toLowerCase() || "";
 
-      const matchesEvent =
-        eventFilter === "" || item.tipoEvento === eventFilter;
+        const matchesSearch =
+          morador.includes(searchValue) ||
+          local.includes(searchValue) ||
+          convidados.includes(searchValue) ||
+          tipoEvento.includes(searchValue);
 
-      const matchesLocation =
-        locationFilter === "" || item.local === locationFilter;
+        const matchesDate = isDateInRange(item.data, dateFilter);
 
-      const matchesDate = isDateInRange(item.data, dateFilter);
+        return matchesSearch && matchesDate;
+      })
+      .sort((a, b) => {
+        const dateA = new Date(`${a.data}T${a.hora || "00:00:00"}`);
+        const dateB = new Date(`${b.data}T${b.hora || "00:00:00"}`);
 
-      return matchesSearch && matchesEvent && matchesLocation && matchesDate;
-    });
-  }, [qrcodes, search, eventFilter, locationFilter, dateFilter]);
+        return dateB - dateA;
+      });
+  }, [qrcodes, search, dateFilter, today]);
 
   const handleGenerateQRCode = async (data) => {
-    const loadingToast = toast.loading("Gerando QR Code...");
+    const loadingToast = toast.loading("Cadastrando evento...");
 
     try {
-      // Simulação de processamento
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
-      const newQRCode = {
-        id: Date.now(),
-        ...data,
-        qrCode: `https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=KIZONMBA-${Date.now()}`,
+      const payload = {
+        morador: data.morador,
+        tipo_evento: data.tipoEvento,
+        data_evento: data.data,
+        hora_inicio: data.hora,
+        hora_fim: data.horaFim,
+        local: data.local,
+        convidado: data.convidados,
       };
 
-      setQrcodes((prev) => [newQRCode, ...prev]);
+      console.log("PAYLOAD ENVIADO:", payload);
+
+      const newEvent = await createEvent(payload);
+
+      console.log("EVENTO CRIADO:", newEvent);
+
+      const normalizedEvent = {
+        id: newEvent.id,
+        morador: newEvent.morador,
+        tipoEvento: newEvent.tipo_evento,
+        data: newEvent.data_evento,
+        hora: newEvent.hora_inicio,
+        horaFim: newEvent.hora_fim,
+        local: newEvent.local,
+        convidados: newEvent.convidado,
+      };
+
+      setQrcodes((prev) => [normalizedEvent, ...prev]);
 
       reset();
-
       setIsModalOpen(false);
 
       toast.dismiss(loadingToast);
-
-      toast.success("QR Code gerado com sucesso!");
+      toast.success("Evento cadastrado com sucesso!");
     } catch (error) {
-      console.error(error);
+      console.error("ERRO AO CADASTRAR EVENTO:", error);
+      console.error("RESPOSTA DA API:", error.response?.data);
 
       toast.dismiss(loadingToast);
 
-      toast.error("Não foi possível gerar o QR Code.");
+      toast.error("Não foi possível cadastrar o evento.");
     }
   };
-
-  const locations = [
-    "Rés do chão",
-    "Piso 01/ Floor 01",
-    "Residência/ Residencial",
-    "Ginásio/ Gym",
-    "Campo Padel/ Padel court",
-    "Campo de Ténis/Tennis Court",
-    "Campo de Futebol/FootBall Court",
-  ];
 
   return (
     <>
@@ -317,29 +311,31 @@ export default function Dashboard() {
                 Gerar QR Code
               </button>
 
-              <Link
-                to="/login"
+              <button
+                type="button"
+                onClick={handleLogout}
                 className="flex cursor-pointer items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-5 py-3 text-sm font-semibold text-slate-700 transition hover:border-red-200 hover:bg-red-50 hover:text-red-600"
               >
                 <i className="fa-solid fa-right-from-bracket" />
                 Sair
-              </Link>
+              </button>
             </div>
           </div>
 
           {/* PESQUISA E FILTROS */}
+          {/* PESQUISA */}
           <div className="mb-8 rounded-2xl border border-slate-200 bg-white p-5">
             <div className="mb-4 flex items-center gap-2">
-              <i className="fa-solid fa-filter text-sm text-blue-700" />
+              <i className="fa-solid fa-magnifying-glass text-sm text-blue-700" />
 
               <h3 className="text-sm font-bold text-slate-800">
                 Pesquisar QR Codes
               </h3>
             </div>
 
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+            <div className="grid gap-4 md:grid-cols-[1fr_240px]">
               {/* PESQUISA */}
-              <div className="relative lg:col-span-2">
+              <div className="relative">
                 <i className="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
 
                 <input
@@ -355,7 +351,7 @@ export default function Dashboard() {
               <select
                 value={dateFilter}
                 onChange={(e) => setDateFilter(e.target.value)}
-                className="cursor-pointer rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-700 outline-none transition focus:border-blue-600 focus:bg-white focus:ring-2 focus:ring-blue-600/10"
+                className="w-full cursor-pointer rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-700 outline-none transition focus:border-blue-600 focus:bg-white focus:ring-2 focus:ring-blue-600/10"
               >
                 <option value="today">Hoje</option>
                 <option value="yesterday">Ontem</option>
@@ -365,62 +361,6 @@ export default function Dashboard() {
                 <option value="lastMonth">Mês passado</option>
                 <option value="previous">Anteriores</option>
                 <option value="all">Todos</option>
-              </select>
-
-              {/* EVENTO */}
-              <select
-                value={eventFilter}
-                onChange={(e) => setEventFilter(e.target.value)}
-                className="cursor-pointer rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-700 outline-none transition focus:border-blue-600 focus:bg-white focus:ring-2 focus:ring-blue-600/10"
-              >
-                <option value="">
-                  Selecione o tipo de evento/Select Event Type
-                </option>
-
-                <option value="Aniversário/ Birthday">
-                  Aniversário/ Aniversário
-                </option>
-
-                <option value="Reunião/Meeting">Reunião/Meeting</option>
-
-                <option value="Palestras/Lectures">Palestras/Palestras</option>
-
-                <option value="Aulas para criança/ Classes for children">
-                  Aulas para criança/ Aulas para crianças
-                </option>
-
-                <option value="Jogos/ Games">Jogos/ Games</option>
-              </select>
-
-              {/* LOCAL */}
-              <select
-                value={locationFilter}
-                onChange={(e) => setLocationFilter(e.target.value)}
-                className="cursor-pointer rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-700 outline-none transition focus:border-blue-600 focus:bg-white focus:ring-2 focus:ring-blue-600/10"
-              >
-                <option value="">Selecione o local/ Selecionar local</option>
-
-                <option value="Rés do chão">Rés do chão / Ground floor</option>
-
-                <option value="Piso 01/ Floor 01">Piso 01 / Andar 01</option>
-
-                <option value="Residência/ Residencial">
-                  Residência / Residencial
-                </option>
-
-                <option value="Ginásio/ Gym">Ginásio / Ginásio</option>
-
-                <option value="Campo Padel/ Padel court">
-                  Campo de Padel / Quadra de Padel
-                </option>
-
-                <option value="Campo de Ténis/Tennis Court">
-                  Campo de Ténis / Campo de Ténis
-                </option>
-
-                <option value="Campo de Futebol/FootBall Court">
-                  Campo de Futebol / Quadra de Futebol
-                </option>
               </select>
             </div>
           </div>
@@ -477,113 +417,138 @@ export default function Dashboard() {
           </div>
 
           {/* TODOS OS REGISTOS */}
-          <div>
-            <div className="mb-4">
-              <h3 className="text-lg font-bold text-slate-900">
-                QR Codes cadastrados
-              </h3>
+          {/* HISTÓRICO */}
+          <div className="mt-8">
+            <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
+              <div>
+                <h3 className="text-lg font-bold text-slate-900">
+                  Histórico de QR Codes
+                </h3>
 
-              <p className="mt-1 text-xs text-slate-500">
-                Histórico de QR Codes gerados no sistema.
-              </p>
+                <p className="mt-1 text-xs text-slate-500">
+                  Consulte os QR Codes de hoje e dos períodos anteriores.
+                </p>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => setShowHistory((prev) => !prev)}
+                className="flex cursor-pointer items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-5 py-3 text-sm font-semibold text-slate-700 transition hover:border-blue-200 hover:bg-blue-50 hover:text-blue-700"
+              >
+                <i
+                  className={`fa-solid ${
+                    showHistory ? "fa-chevron-up" : "fa-clock-rotate-left"
+                  }`}
+                />
+
+                {showHistory ? "Ocultar histórico" : "Mostrar histórico"}
+              </button>
             </div>
 
-            {filteredQrcodes.length === 0 ? (
-              <div className="rounded-2xl border border-slate-200 bg-white px-6 py-12 text-center">
-                <i className="fa-solid fa-magnifying-glass text-3xl text-slate-300" />
+            {showHistory && (
+              <div className="mt-5">
+                {filteredQrcodes.length === 0 ? (
+                  <div className="rounded-2xl border border-slate-200 bg-white px-6 py-12 text-center">
+                    <i className="fa-solid fa-magnifying-glass text-3xl text-slate-300" />
 
-                <p className="mt-3 text-sm font-medium text-slate-500">
-                  Nenhum QR Code encontrado para o período selecionado.
-                </p>
+                    <p className="mt-3 text-sm font-medium text-slate-500">
+                      Nenhum QR Code encontrado para o período selecionado.
+                    </p>
 
-                <button
-                  type="button"
-                  onClick={() => setDateFilter("all")}
-                  className="mt-4 cursor-pointer text-sm font-semibold text-blue-700 hover:text-blue-800"
-                >
-                  Ver todos os QR Codes
-                </button>
-              </div>
-            ) : (
-              <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white">
-                <div className="overflow-x-auto">
-                  <table className="w-full min-w-275 text-left">
-                    <thead className="border-b border-slate-200 bg-slate-50">
-                      <tr>
-                        <th className="px-5 py-4 text-xs font-bold uppercase tracking-wider text-slate-500">
-                          Morador
-                        </th>
+                    {dateFilter !== "all" && (
+                      <button
+                        type="button"
+                        onClick={() => setDateFilter("all")}
+                        className="mt-4 cursor-pointer text-sm font-semibold text-blue-700 hover:text-blue-800"
+                      >
+                        Ver todos os QR Codes
+                      </button>
+                    )}
+                  </div>
+                ) : (
+                  <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white">
+                    <div className="overflow-x-auto">
+                      <table className="w-full min-w-275 text-left">
+                        <thead className="border-b border-slate-200 bg-slate-50">
+                          <tr>
+                            <th className="px-5 py-4 text-xs font-bold uppercase tracking-wider text-slate-500">
+                              Morador
+                            </th>
 
-                        <th className="px-5 py-4 text-xs font-bold uppercase tracking-wider text-slate-500">
-                          Evento
-                        </th>
+                            <th className="px-5 py-4 text-xs font-bold uppercase tracking-wider text-slate-500">
+                              Evento
+                            </th>
 
-                        <th className="px-5 py-4 text-xs font-bold uppercase tracking-wider text-slate-500">
-                          Data
-                        </th>
+                            <th className="px-5 py-4 text-xs font-bold uppercase tracking-wider text-slate-500">
+                              Data
+                            </th>
 
-                        <th className="px-5 py-4 text-xs font-bold uppercase tracking-wider text-slate-500">
-                          Horário
-                        </th>
+                            <th className="px-5 py-4 text-xs font-bold uppercase tracking-wider text-slate-500">
+                              Horário
+                            </th>
 
-                        <th className="px-5 py-4 text-xs font-bold uppercase tracking-wider text-slate-500">
-                          Local
-                        </th>
+                            <th className="px-5 py-4 text-xs font-bold uppercase tracking-wider text-slate-500">
+                              Local
+                            </th>
 
-                        <th className="px-5 py-4 text-xs font-bold uppercase tracking-wider text-slate-500">
-                          Convidados
-                        </th>
+                            <th className="px-5 py-4 text-xs font-bold uppercase tracking-wider text-slate-500">
+                              Convidados
+                            </th>
 
-                        <th className="px-5 py-4 text-xs font-bold uppercase tracking-wider text-slate-500">
-                          QR Code
-                        </th>
-                      </tr>
-                    </thead>
+                            <th className="px-5 py-4 text-xs font-bold uppercase tracking-wider text-slate-500">
+                              QR Code
+                            </th>
+                          </tr>
+                        </thead>
 
-                    <tbody className="divide-y divide-slate-100">
-                      {filteredQrcodes.map((item) => (
-                        <tr
-                          key={item.id}
-                          className="transition hover:bg-slate-50"
-                        >
-                          <td className="px-5 py-4 text-sm font-semibold text-slate-800">
-                            {item.morador}
-                          </td>
+                        <tbody className="divide-y divide-slate-100">
+                          {filteredQrcodes.map((item) => (
+                            <tr
+                              key={item.id}
+                              className="transition hover:bg-slate-50"
+                            >
+                              <td className="px-5 py-4 text-sm font-semibold text-slate-800">
+                                {item.morador}
+                              </td>
 
-                          <td className="px-5 py-4">
-                            <span className="rounded-full bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-800">
-                              {item.tipoEvento}
-                            </span>
-                          </td>
+                              <td className="px-5 py-4">
+                                <span className="rounded-full bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-800">
+                                  {item.tipoEvento}
+                                </span>
+                              </td>
 
-                          <td className="px-5 py-4 text-sm text-slate-600">
-                            {formatDate(item.data)}
-                          </td>
+                              <td className="px-5 py-4 text-sm text-slate-600">
+                                {formatDate(item.data)}
+                              </td>
 
-                          <td className="px-5 py-4 text-sm text-slate-600">
-                            {item.hora} - {item.horaFim}
-                          </td>
+                              <td className="px-5 py-4 text-sm text-slate-600">
+                                {item.hora} - {item.horaFim}
+                              </td>
 
-                          <td className="px-5 py-4 text-sm text-slate-600">
-                            {item.local}
-                          </td>
+                              <td className="px-5 py-4 text-sm text-slate-600">
+                                {item.local}
+                              </td>
 
-                          <td className="max-w-xs px-5 py-4 text-sm text-slate-600">
-                            {item.convidados}
-                          </td>
+                              <td className="max-w-xs px-5 py-4 text-sm text-slate-600">
+                                {item.convidados}
+                              </td>
 
-                          <td className="px-5 py-4">
-                            <img
-                              src={item.qrCode}
-                              alt={`QR Code de ${item.morador}`}
-                              className="h-16 w-16 rounded-lg border border-slate-200 object-cover"
-                            />
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
+                              <td className="px-5 py-4">
+                                <div className="inline-flex rounded-lg border border-slate-200 bg-white p-1">
+                                  <QRCodeCanvas
+                                    value={`https://condominiokizomba.com/evento/${item.id}`}
+                                    size={64}
+                                    level="H"
+                                  />
+                                </div>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                )}
               </div>
             )}
           </div>
@@ -871,11 +836,13 @@ function QRCodeCard({ item }) {
           </p>
         </div>
 
-        <img
-          src={item.qrCode}
-          alt={`QR Code de ${item.morador}`}
-          className="h-20 w-20 rounded-lg border border-slate-200"
-        />
+        <div className="rounded-lg border border-slate-200 bg-white p-2">
+          <QRCodeCanvas
+            value={`https://condominiokizomba.com/evento/${item.id}`}
+            size={80}
+            level="H"
+          />
+        </div>
       </div>
 
       <div className="mt-5 grid grid-cols-2 gap-3 border-t border-slate-100 pt-4">
@@ -912,8 +879,4 @@ function InfoItem({ icon, label, value }) {
       <p className="mt-1 text-xs font-semibold text-slate-700">{value}</p>
     </div>
   );
-}
-
-function formatDate(date) {
-  return new Date(`${date}T00:00:00`).toLocaleDateString("pt-PT");
 }
