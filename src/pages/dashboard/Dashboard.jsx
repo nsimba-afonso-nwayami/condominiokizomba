@@ -8,7 +8,6 @@ import { formatDate, getToday } from "../../utils/dateUtils";
 import { logout } from "../../services/authService";
 import { qrcodeSchema } from "../../validations/qrcodeSchema";
 import { getEvents, createEvent } from "../../services/eventService";
-import { QRCodeCanvas } from "qrcode.react";
 import QRCode from "./components/QRCode";
 import { generateEventPDF } from "../../services/pdfService";
 

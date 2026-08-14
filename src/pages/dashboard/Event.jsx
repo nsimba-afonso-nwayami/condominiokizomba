@@ -17,8 +17,8 @@ export default function Event() {
 
         setEvent(data);
       } catch (error) {
-        console.error("ERRO AO BUSCAR EVENTO:", error);
-        console.error("RESPOSTA DA API:", error.response?.data);
+        /*console.error("ERRO AO BUSCAR EVENTO:", error);
+        console.error("RESPOSTA DA API:", error.response?.data);*/
 
         toast.error("Não foi possível carregar o evento.");
       } finally {

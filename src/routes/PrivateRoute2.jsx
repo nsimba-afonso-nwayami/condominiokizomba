@@ -5,14 +5,12 @@ export default function PrivateRoute() {
   const authenticated = isAuthenticated();
   const location = useLocation();
 
-  if (!authenticated) {
-    return (
-      <Navigate
-        to="/login"
-        state={{ from: location }}
-        replace
-      />
-    );
+  /*if (!authenticated) {
+    return <Navigate to="/login" replace />;
+  }*/
+
+  if (!isAuthenticated) {
+    return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
   return <Outlet />;

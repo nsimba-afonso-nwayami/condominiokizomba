@@ -1,4 +1,4 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import toast from "react-hot-toast";
@@ -10,6 +10,8 @@ import { saveTokens } from "../../services/authStorage";
 
 export default function Login() {
   const navigate = useNavigate();
+  const location = useLocation();
+
   const {
     register,
     handleSubmit,
@@ -41,7 +43,10 @@ export default function Login() {
 
       toast.success("Login realizado com sucesso!");
 
-      navigate("/my-dashboard", { replace: true });
+      //navigate("/my-dashboard", { replace: true });
+      const from = location.state?.from?.pathname || "/my-dashboard";
+
+      navigate(from, { replace: true });
     } catch (error) {
       console.error("Erro no login:", error);
 

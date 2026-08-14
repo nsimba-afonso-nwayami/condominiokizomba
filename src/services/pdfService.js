@@ -39,10 +39,11 @@ export const generateEventPDF = (event) => {
 
   pdf.text(convidados, 20, 126);
 
-  const qrElement = document.getElementById(`qr-code-${event.id}`);
+  const qrContainer = document.getElementById(`qr-code-${event.id}`);
+  const qrCanvas = qrContainer?.querySelector("canvas");
 
-  if (qrElement) {
-    const qrDataUrl = qrElement.toDataURL("image/png");
+  if (qrCanvas) {
+    const qrDataUrl = qrCanvas.toDataURL("image/png");
 
     pdf.addImage(qrDataUrl, "PNG", 135, 45, 55, 55);
   }
