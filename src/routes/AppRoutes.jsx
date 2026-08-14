@@ -15,6 +15,7 @@ import Login from "../pages/auth/Login";
 
 //Dashboard
 import Dashboard from "../pages/dashboard/Dashboard";
+import Event from "../pages/dashboard/Event";
 import NotFoundDashboard from "../pages/dashboard/NotFoundDashboard";
 
 export default function AppRoutes() {
@@ -32,6 +33,7 @@ export default function AppRoutes() {
       <Route element={<PrivateRoute />}>
         <Route path="/my-dashboard/">
           <Route path="" element={<Dashboard />} />
+          <Route path="evento/:id" element={<Event />} />
           <Route path="*" element={<NotFoundDashboard />} />
         </Route>
       </Route>

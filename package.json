@@ -13,6 +13,8 @@
     "@hookform/resolvers": "^5.7.1",
     "@tailwindcss/vite": "^4.3.3",
     "axios": "^1.19.0",
+    "jspdf": "^4.2.1",
+    "lightgallery": "^2.9.0",
     "qrcode.react": "^4.2.0",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",

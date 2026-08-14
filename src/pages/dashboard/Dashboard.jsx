@@ -9,6 +9,8 @@ import { logout } from "../../services/authService";
 import { qrcodeSchema } from "../../validations/qrcodeSchema";
 import { getEvents, createEvent } from "../../services/eventService";
 import { QRCodeCanvas } from "qrcode.react";
+import QRCode from "./components/QRCode";
+import { generateEventPDF } from "../../services/pdfService";
 
 export default function Dashboard() {
   const navigate = useNavigate();
@@ -534,13 +536,7 @@ export default function Dashboard() {
                               </td>
 
                               <td className="px-5 py-4">
-                                <div className="inline-flex rounded-lg border border-slate-200 bg-white p-1">
-                                  <QRCodeCanvas
-                                    value={`https://condominiokizomba.com/evento/${item.id}`}
-                                    size={64}
-                                    level="H"
-                                  />
-                                </div>
+                                <QRCode item={item} size={80} />
                               </td>
                             </tr>
                           ))}
@@ -828,7 +824,9 @@ function QRCodeCard({ item }) {
             {item.tipoEvento}
           </span>
 
-          <h4 className="mt-3 font-bold text-slate-900">{item.morador}</h4>
+          <h4 className="mt-3 font-bold text-slate-900">
+            {item.morador}
+          </h4>
 
           <p className="mt-1 text-xs text-slate-500">
             <i className="fa-solid fa-location-dot mr-1 text-blue-700" />
@@ -836,12 +834,8 @@ function QRCodeCard({ item }) {
           </p>
         </div>
 
-        <div className="rounded-lg border border-slate-200 bg-white p-2">
-          <QRCodeCanvas
-            value={`https://condominiokizomba.com/evento/${item.id}`}
-            size={80}
-            level="H"
-          />
+        <div id={`qr-code-${item.id}`}>
+          <QRCode item={item} size={80} />
         </div>
       </div>
 
@@ -863,6 +857,17 @@ function QRCodeCard({ item }) {
           label="Convidados"
           value={item.convidados}
         />
+      </div>
+
+      <div className="mt-5 border-t border-slate-100 pt-4">
+        <button
+          type="button"
+          onClick={() => generateEventPDF(item)}
+          className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-semibold text-slate-700 transition hover:border-blue-200 hover:bg-blue-50 hover:text-blue-700"
+        >
+          <i className="fa-solid fa-file-pdf" />
+          Baixar PDF
+        </button>
       </div>
     </div>
   );
