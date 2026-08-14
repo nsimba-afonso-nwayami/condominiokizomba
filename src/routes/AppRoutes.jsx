@@ -3,8 +3,8 @@ import { Routes, Route } from "react-router-dom";
 // Layout do site
 import SiteLayout from "../layouts/SiteLayout";
 
-//
-//import PrivateRoute from "../routes/PrivateRoute";
+//Rotas privadas
+import PrivateRoute from "../routes/PrivateRoute";
 
 //Site
 import Home from "../pages/site/Home";
@@ -29,9 +29,11 @@ export default function AppRoutes() {
       {/*Rotas de autenticação*/}
       <Route path="/login" element={<Login />} />
 
-      <Route path="/my-dashboard/">
-        <Route path="" element={<Dashboard />} />
-        <Route path="*" element={<NotFoundDashboard />} />
+      <Route element={<PrivateRoute />}>
+        <Route path="/my-dashboard/">
+          <Route path="" element={<Dashboard />} />
+          <Route path="*" element={<NotFoundDashboard />} />
+        </Route>
       </Route>
     </Routes>
   );
