@@ -10,6 +10,6 @@ export const loginSchema = yup.object({
   password: yup
     .string()
     .required("A palavra-passe é obrigatória.")
-    .min(6, "A palavra-passe deve ter pelo menos 6 caracteres.")
+    .min(4, "A palavra-passe deve ter pelo menos 4 caracteres.")
     .max(100, "A palavra-passe não pode ultrapassar 100 caracteres."),
 });
