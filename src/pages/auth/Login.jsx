@@ -5,6 +5,8 @@ import toast from "react-hot-toast";
 
 import LoginBg from "../../assets/img/login.jpg";
 import { loginSchema } from "../../validations/loginSchema";
+import { login } from "../../services/authService";
+import { saveTokens } from "../../services/authStorage";
 
 export default function Login() {
   const navigate = useNavigate();
@@ -25,23 +27,37 @@ export default function Login() {
     const loadingToast = toast.loading("Processando o login...");
 
     try {
-      console.log("Dados do login:", data);
+      const response = await login({
+        username: data.username,
+        password: data.password,
+      });
 
-      // Simulação da requisição à API
-      await new Promise((resolve) => setTimeout(resolve, 1500));
+      saveTokens({
+        access: response.access,
+        refresh: response.refresh,
+      });
 
       toast.dismiss(loadingToast);
 
       toast.success("Login realizado com sucesso!");
 
-      // Redireciona para o dashboard
-      setTimeout(() => {
-        navigate("/my-dashboard");
-      }, 800);
+      navigate("/my-dashboard", { replace: true });
     } catch (error) {
-      console.error(error);
+      console.error("Erro no login:", error);
 
       toast.dismiss(loadingToast);
+
+      if (error.response?.status === 401) {
+        toast.error("Nome de usuário ou palavra-passe inválidos.");
+        return;
+      }
+
+      if (error.response?.status === 400) {
+        toast.error(
+          error.response?.data?.detail || "Os dados enviados são inválidos.",
+        );
+        return;
+      }
 
       toast.error("Não foi possível realizar o login. Tente novamente.");
     }
