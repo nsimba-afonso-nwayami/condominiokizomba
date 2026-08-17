@@ -535,7 +535,7 @@ export default function Dashboard() {
                               </td>
 
                               <td className="px-5 py-4">
-                                <QRCode item={item} size={80} />
+                                <QRCode item={item} size={120} />
                               </td>
                             </tr>
                           ))}
@@ -834,7 +834,7 @@ function QRCodeCard({ item }) {
         </div>
 
         <div id={`qr-code-${item.id}`}>
-          <QRCode item={item} size={80} />
+          <QRCode item={item} size={140} />
         </div>
       </div>
 
