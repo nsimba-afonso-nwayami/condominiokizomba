@@ -32,7 +32,7 @@ export default function Modal({ isOpen, onClose, title, icon, children }) {
           </h2>
 
           <p className="mt-1 text-[10px] font-bold uppercase leading-none tracking-widest text-slate-500">
-            Condomínio Kizonmba
+            Condomínio Kizomba
           </p>
         </div>
 

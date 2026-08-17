@@ -5,8 +5,8 @@ export default function QRCode({ item, size = 80 }) {
   const canvasRef = useRef(null);
   const [qrImage, setQrImage] = useState("");
 
-  //const qrValue = `https://condominiokizomba.com/evento/${item.id}`;
-  const qrValue = `https://condominiokizomba.vercel.app/evento/${item.id}`;
+   const qrValue = `https://condominiokizomba.com/evento/${item.id}`;
+  // const qrValue = `https://condominiokizomba.vercel.app/evento/${item.id}`;
   // const qrValue = `http://localhost:5173/evento/${item.id}`;
 
   useEffect(() => {
