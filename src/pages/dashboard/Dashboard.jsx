@@ -14,6 +14,7 @@ import { generateEventPDF } from "../../services/pdfService";
 export default function Dashboard() {
   const navigate = useNavigate();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedQRCode, setSelectedQRCode] = useState(null);
 
   const [search, setSearch] = useState("");
   const [dateFilter, setDateFilter] = useState("today");
@@ -411,7 +412,11 @@ export default function Dashboard() {
             ) : (
               <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
                 {qrcodesHoje.map((item) => (
-                  <QRCodeCard key={item.id} item={item} />
+                  <QRCodeCard
+                    key={item.id}
+                    item={item}
+                    onQRCodeClick={setSelectedQRCode}
+                  />
                 ))}
               </div>
             )}
@@ -535,7 +540,13 @@ export default function Dashboard() {
                               </td>
 
                               <td className="px-5 py-4">
-                                <QRCode item={item} size={120} />
+                                <button
+                                  type="button"
+                                  onClick={() => setSelectedQRCode(item)}
+                                  className="cursor-pointer rounded-xl border border-slate-200 bg-white p-2 transition hover:border-blue-300 hover:bg-blue-50"
+                                >
+                                  <QRCode item={item} size={90} />
+                                </button>
                               </td>
                             </tr>
                           ))}
@@ -809,12 +820,61 @@ export default function Dashboard() {
             </div>
           </form>
         </Modal>
+
+        <Modal
+          isOpen={!!selectedQRCode}
+          onClose={() => setSelectedQRCode(null)}
+          title="QR Code"
+          icon="fa-solid fa-qrcode"
+        >
+          {selectedQRCode && (
+            <div className="flex min-h-[60vh] flex-col items-center justify-center">
+              <div className="text-center">
+                <h3 className="text-xl font-bold text-slate-900">
+                  {selectedQRCode.morador}
+                </h3>
+
+                <p className="mt-1 text-sm text-slate-500">
+                  {selectedQRCode.tipoEvento}
+                </p>
+              </div>
+
+              <div className="mt-8 rounded-2xl border border-slate-200 bg-white p-6">
+                <QRCode item={selectedQRCode} size={320} />
+              </div>
+
+              <p className="mt-5 text-center text-sm text-slate-500">
+                Apresente este QR Code para leitura na entrada do condomínio.
+              </p>
+
+              <div className="mt-6 flex flex-col gap-3 sm:flex-row">
+                <button
+                  type="button"
+                  onClick={() => generateEventPDF(selectedQRCode)}
+                  className="flex cursor-pointer items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-5 py-3 text-sm font-semibold text-slate-700 transition hover:border-blue-200 hover:bg-blue-50 hover:text-blue-700"
+                >
+                  <i className="fa-solid fa-file-pdf" />
+                  Baixar PDF
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setSelectedQRCode(null)}
+                  className="flex cursor-pointer items-center justify-center gap-2 rounded-xl bg-blue-800 px-5 py-3 text-sm font-semibold text-white transition hover:bg-blue-700"
+                >
+                  <i className="fa-solid fa-check" />
+                  Fechar
+                </button>
+              </div>
+            </div>
+          )}
+        </Modal>
       </section>
     </>
   );
 }
 
-function QRCodeCard({ item }) {
+function QRCodeCard({ item, onQRCodeClick }) {
   return (
     <div className="rounded-2xl border border-slate-200 bg-white p-5 transition duration-300 hover:-translate-y-1 hover:border-blue-200">
       <div className="flex items-start justify-between gap-4">
@@ -833,9 +893,15 @@ function QRCodeCard({ item }) {
           </p>
         </div>
 
-        <div id={`qr-code-${item.id}`}>
-          <QRCode item={item} size={140} />
-        </div>
+        <button
+          type="button"
+          onClick={() => onQRCodeClick(item)}
+          className="cursor-pointer rounded-xl border border-transparent p-1 transition hover:border-blue-200 hover:bg-blue-50"
+        >
+          <div id={`qr-code-${item.id}`}>
+            <QRCode item={item} size={140} />
+          </div>
+        </button>
       </div>
 
       <div className="mt-5 grid grid-cols-2 gap-3 border-t border-slate-100 pt-4">
