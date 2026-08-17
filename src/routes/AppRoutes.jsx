@@ -15,7 +15,8 @@ import Login from "../pages/auth/Login";
 
 //Dashboard
 import Dashboard from "../pages/dashboard/Dashboard";
-import Event from "../pages/dashboard/Event";
+import Event from "../pages/dashboard/PublicEvent";
+import PublicEvent from "../pages/dashboard/Event";
 import NotFoundDashboard from "../pages/dashboard/NotFoundDashboard";
 
 export default function AppRoutes() {
@@ -30,6 +31,10 @@ export default function AppRoutes() {
       {/*Rotas de autenticação*/}
       <Route path="/login" element={<Login />} />
 
+      <Route
+        path="/evento/:id"
+        element={<PublicEvent />}
+      />
       <Route element={<PrivateRoute />}>
         <Route path="/my-dashboard/">
           <Route path="" element={<Dashboard />} />
