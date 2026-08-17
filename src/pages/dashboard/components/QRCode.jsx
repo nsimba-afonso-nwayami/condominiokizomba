@@ -10,8 +10,18 @@ export default function QRCode({ item, size = 80 }) {
   const canvasRef = useRef(null);
   const [qrImage, setQrImage] = useState("");
 
-  const qrValue = `https://condominiokizomba.com/my-dashboard/evento/${item.id}`;
-  //const qrValue = `http://localhost:5173/my-dashboard/evento/${item.id}`;
+  //const eventUrl = `https://condominiokizomba.com/my-dashboard/evento/${item.id}`;
+  const eventUrl = `https://condominiokizomba.vercel.app/evento/${item.id}`;
+  // const eventUrl = `http://localhost:5173/my-dashboard/evento/${item.id}`;
+
+  const qrValue = `${eventUrl}
+
+    Condomínio Kizomba
+    Morador: ${item.morador}
+    Evento: ${item.tipoEvento}
+    Data: ${item.data}
+    Horário: ${item.hora} - ${item.horaFim}
+    Local: ${item.local}`;
 
   useEffect(() => {
     if (canvasRef.current) {
@@ -19,7 +29,7 @@ export default function QRCode({ item, size = 80 }) {
 
       setQrImage(image);
     }
-  }, [item.id, size]);
+  }, [item, size]);
 
   return (
     <>
@@ -33,10 +43,7 @@ export default function QRCode({ item, size = 80 }) {
       </div>
 
       {qrImage && (
-        <LightGallery
-          speed={500}
-          plugins={[lgZoom]}
-        >
+        <LightGallery speed={500} plugins={[lgZoom]}>
           <a
             href={qrImage}
             className="group block cursor-pointer rounded-lg border border-slate-200 bg-white p-2 transition hover:border-blue-300"
