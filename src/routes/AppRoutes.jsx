@@ -19,6 +19,10 @@ import Event from "../pages/dashboard/PublicEvent";
 import PublicEvent from "../pages/dashboard/Event";
 import NotFoundDashboard from "../pages/dashboard/NotFoundDashboard";
 
+//Admin
+import DashboardAdmin from "../pages/admin/DashboardAdmin";
+import EventosAdmin from "../pages/admin/EventosAdmin";
+
 export default function AppRoutes() {
   return (
     <Routes>
@@ -41,6 +45,12 @@ export default function AppRoutes() {
           <Route path="evento/:id" element={<Event />} />
           <Route path="*" element={<NotFoundDashboard />} />
         </Route>
+      </Route>
+
+      <Route path="/dashboard/admin/">
+        <Route path="" element={<DashboardAdmin />} />
+        <Route path="eventos" element={<EventosAdmin />} />
+        <Route path="*" element={<NotFoundDashboard />} />
       </Route>
     </Routes>
   );
