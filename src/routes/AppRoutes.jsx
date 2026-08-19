@@ -22,6 +22,9 @@ import NotFoundDashboard from "../pages/dashboard/NotFoundDashboard";
 //Admin
 import DashboardAdmin from "../pages/admin/DashboardAdmin";
 import EventosAdmin from "../pages/admin/EventosAdmin";
+import UsuariosAdmin from "../pages/admin/UsuariosAdmin";
+import PerfilAdmin from "../pages/admin/PerfilAdmin";
+import NotFoundAdmin from "../pages/admin/NotFoundAdmin";
 
 export default function AppRoutes() {
   return (
@@ -47,10 +50,14 @@ export default function AppRoutes() {
         </Route>
       </Route>
 
-      <Route path="/dashboard/admin/">
-        <Route path="" element={<DashboardAdmin />} />
-        <Route path="eventos" element={<EventosAdmin />} />
-        <Route path="*" element={<NotFoundDashboard />} />
+      <Route element={<PrivateRoute />}>
+        <Route path="/dashboard/admin/">
+          <Route path="" element={<DashboardAdmin />} />
+          <Route path="eventos" element={<EventosAdmin />} />
+          <Route path="usuarios" element={<UsuariosAdmin />} />
+          <Route path="perfil" element={<PerfilAdmin />} />
+          <Route path="*" element={<NotFoundAdmin />} />
+        </Route>
       </Route>
     </Routes>
   );
