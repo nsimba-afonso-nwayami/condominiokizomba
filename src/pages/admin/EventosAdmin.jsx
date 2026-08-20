@@ -365,7 +365,7 @@ export default function EventosAdmin() {
             </div>
           ) : (
             <div className="overflow-x-auto">
-              <table className="w-full min-w-[1100px] text-left">
+              <table className="w-full min-w-275 text-left">
                 <thead className="border-b border-neutral-200 bg-neutral-100/70">
                   <tr>
                     <th className="px-5 py-4 text-xs font-bold uppercase tracking-wider text-neutral-500">
