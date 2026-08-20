@@ -1,19 +1,19 @@
 import { api } from "./api";
 
 export const getUsers = async () => {
-  console.log("[userService] BUSCANDO USUÁRIOS...");
+  //console.log("[userService] BUSCANDO USUÁRIOS...");
 
   try {
     const response = await api.get("/users/");
 
-    console.log(
+    /*console.log(
       "[userService] USUÁRIOS RECEBIDOS:",
       response.data,
-    );
+    );*/
 
     return response.data;
   } catch (error) {
-    console.error(
+    /*console.error(
       "[userService] ERRO AO BUSCAR USUÁRIOS:",
       error,
     );
@@ -23,40 +23,40 @@ export const getUsers = async () => {
       error.response?.data,
     );
 
-    throw error;
+    throw error;*/
   }
 };
 
 export const getCurrentUser = async () => {
-  console.log("[userService] BUSCANDO USUÁRIO AUTENTICADO...");
+  //console.log("[userService] BUSCANDO USUÁRIO AUTENTICADO...");
 
   const response = await api.get("/auth/me/");
 
-  console.log(
+  /*console.log(
     "[userService] USUÁRIO AUTENTICADO RECEBIDO:",
     response.data,
-  );
+  );*/
 
   return response.data;
 };
 
 export const registerUser = async (userData) => {
-  console.log(
+  /*console.log(
     "[userService] DADOS PARA CADASTRO:",
     userData,
-  );
+  );*/
 
   try {
     const response = await api.post("/register/", userData);
 
-    console.log(
+    /*console.log(
       "[userService] USUÁRIO CADASTRADO:",
       response.data,
-    );
+    );*/
 
     return response.data;
   } catch (error) {
-    console.error(
+    /*console.error(
       "[userService] ERRO AO CADASTRAR USUÁRIO:",
       error,
     );
@@ -66,7 +66,7 @@ export const registerUser = async (userData) => {
       error.response?.data,
     );
 
-    throw error;
+    throw error;*/
   }
 };
 
@@ -74,10 +74,10 @@ export const resetUserPassword = async (
   userId,
   passwordData,
 ) => {
-  console.log(
+  /*console.log(
     "[userService] RESETANDO SENHA DO USUÁRIO:",
     userId,
-  );
+  );*/
 
   try {
     const response = await api.post(
@@ -85,14 +85,14 @@ export const resetUserPassword = async (
       passwordData,
     );
 
-    console.log(
+    /*console.log(
       "[userService] SENHA REDEFINIDA:",
       response.data,
-    );
+    );*/
 
     return response.data;
   } catch (error) {
-    console.error(
+    /*console.error(
       "[userService] ERRO AO RESETAR SENHA:",
       error,
     );
@@ -102,14 +102,14 @@ export const resetUserPassword = async (
       error.response?.data,
     );
 
-    throw error;
+    throw error;*/
   }
 };
 
 export const changePassword = async (passwordData) => {
-  console.log(
+  /*console.log(
     "[userService] ALTERANDO SENHA DO USUÁRIO LOGADO...",
-  );
+  );*/
 
   try {
     const response = await api.post(
@@ -117,23 +117,23 @@ export const changePassword = async (passwordData) => {
       passwordData,
     );
 
-    console.log(
+    /*console.log(
       "[userService] SENHA ALTERADA:",
       response.data,
-    );
+    );*/
 
     return response.data;
   } catch (error) {
-    console.error(
+    /*console.error(
       "[userService] ERRO AO ALTERAR SENHA:",
       error,
-    );
+    );*/
 
-    console.error(
+    /*console.error(
       "[userService] RESPOSTA DA API:",
       error.response?.data,
     );
 
-    throw error;
+    throw error;*/
   }
 };

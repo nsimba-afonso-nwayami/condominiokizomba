@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -6,6 +6,7 @@ import toast from "react-hot-toast";
 
 import { formatDate } from "../../utils/dateUtils";
 import { logout } from "../../services/authService";
+import { getCurrentUser } from "../../services/userService";
 import { qrcodeSchema } from "../../validations/qrcodeSchema";
 import { createEvent } from "../../services/eventService";
 import { generateEventPDF } from "../../services/pdfService";
@@ -13,6 +14,9 @@ import QRCode from "./components/QRCode";
 
 export default function Dashboard() {
   const navigate = useNavigate();
+
+  const [user, setUser] = useState(null);
+  const [isUserLoading, setIsUserLoading] = useState(true);
 
   const [generatedEvent, setGeneratedEvent] = useState(null);
 
@@ -33,6 +37,48 @@ export default function Dashboard() {
       convidados: "",
     },
   });
+
+  // BUSCAR USUÁRIO AUTENTICADO
+
+  useEffect(() => {
+    const fetchCurrentUser = async () => {
+      try {
+        setIsUserLoading(true);
+
+        const response = await getCurrentUser();
+
+        /*console.log(
+          "[Dashboard] USUÁRIO AUTENTICADO:",
+          response,
+        );*/
+
+        setUser(response);
+      } catch (error) {
+        /*console.error(
+          "[Dashboard] ERRO AO BUSCAR USUÁRIO:",
+          error,
+        );
+
+        console.error(
+          "[Dashboard] STATUS:",
+          error.response?.status,
+        );
+
+        console.error(
+          "[Dashboard] RESPOSTA DA API:",
+          error.response?.data,
+        );*/
+
+        toast.error(
+          "Não foi possível carregar os dados do usuário.",
+        );
+      } finally {
+        setIsUserLoading(false);
+      }
+    };
+
+    fetchCurrentUser();
+  }, []);
 
   const handleLogout = () => {
     logout();
@@ -76,8 +122,8 @@ export default function Dashboard() {
       toast.dismiss(loadingToast);
       toast.success("Evento cadastrado com sucesso! Role a tela para baixo para ver o código gerado");
     } catch (error) {
-      console.error("ERRO AO CADASTRAR EVENTO:", error);
-      console.error("RESPOSTA DA API:", error.response?.data);
+      /*console.error("ERRO AO CADASTRAR EVENTO:", error);
+      console.error("RESPOSTA DA API:", error.response?.data);*/
 
       toast.dismiss(loadingToast);
 
@@ -110,15 +156,33 @@ export default function Dashboard() {
             </div>
 
             <div className="flex items-center gap-3">
-              <div className="hidden text-right sm:block">
-                <p className="text-sm font-semibold text-slate-800">
-                  Bem-vindo
-                </p>
+              {isUserLoading ? (
+                <>
+                  <div className="flex items-center justify-end gap-2">
+                    <i className="fa-solid fa-spinner fa-spin text-xs text-blue-700" />
 
-                <p className="text-xs text-slate-500">
-                  Morador
-                </p>
-              </div>
+                    <p className="text-sm font-semibold text-slate-800">
+                      Carregando...
+                    </p>
+                  </div>
+
+                  <p className="text-xs text-slate-500">
+                    Morador
+                  </p>
+                </>
+              ) : (
+                <>
+                  <p className="text-sm font-semibold text-slate-800">
+                    {user?.first_name || user?.last_name
+                      ? `${user?.first_name || ""} ${user?.last_name || ""}`.trim()
+                      : user?.username || "Morador"}
+                  </p>
+
+                  <p className="text-xs text-slate-500">
+                    Morador 
+                  </p>
+                </>
+              )}
 
               <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-50 text-blue-800">
                 <i className="fa-solid fa-user" />

@@ -8,21 +8,24 @@ import QRCode from "./components/QRCode";
 
 import { formatDate, getToday } from "../../utils/dateUtils";
 import { getEvents } from "../../services/eventService";
+import { getUsers } from "../../services/userService";
 import { generateEventPDF } from "../../services/pdfService";
 
 export default function DashboardAdmin() {
   const [events, setEvents] = useState([]);
+  const [users, setUsers] = useState([]);
   const [selectedQRCode, setSelectedQRCode] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const fetchEvents = async () => {
+    const fetchDashboardData = async () => {
       try {
-        const data = await getEvents();
+        const [eventsData, usersData] = await Promise.all([
+          getEvents(),
+          getUsers(),
+        ]);
 
-        console.log("EVENTOS RETORNADOS PELA API:", data);
-
-        const normalizedEvents = data.map((item) => ({
+        const normalizedEvents = eventsData.map((item) => ({
           id: item.id,
           morador: item.morador,
           tipoEvento: item.tipo_evento,
@@ -33,20 +36,16 @@ export default function DashboardAdmin() {
           convidados: item.convidado,
         }));
 
-        console.log("EVENTOS NORMALIZADOS:", normalizedEvents);
-
         setEvents(normalizedEvents);
+        setUsers(usersData);
       } catch (error) {
-        console.error("ERRO AO BUSCAR EVENTOS:", error);
-        console.error("RESPOSTA DA API:", error.response?.data);
-
-        toast.error("Não foi possível carregar os eventos.");
+        toast.error("Não foi possível carregar os dados do dashboard.");
       } finally {
         setIsLoading(false);
       }
     };
 
-    fetchEvents();
+    fetchDashboardData();
   }, []);
 
   const today = getToday();
@@ -69,7 +68,7 @@ export default function DashboardAdmin() {
     },
     {
       title: "Utilizadores",
-      value: "—",
+      value: users.length,
       description: "Utilizadores cadastrados",
       icon: "fa-users",
     },
@@ -84,7 +83,7 @@ export default function DashboardAdmin() {
         <section className="flex flex-col justify-between gap-4 border-b border-neutral-400/30 pb-2 sm:flex-row sm:items-center">
           <div>
             <h1 className="text-xl font-bold tracking-tight text-blue-900 sm:text-2xl">
-              Bem-vindo, Adriano
+              Seja Bem-vindo
             </h1>
 
             <p className="mt-0.5 text-xs text-neutral-600 sm:text-sm">

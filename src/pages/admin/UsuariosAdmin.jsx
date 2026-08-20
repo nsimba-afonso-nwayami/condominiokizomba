@@ -81,34 +81,10 @@ export default function UsuariosAdmin() {
   }, []);
 
   const fetchUsers = async () => {
-    console.log(
-      "[UsuariosAdmin] INICIANDO BUSCA DE USUÁRIOS...",
-    );
-
     try {
       setIsLoading(true);
 
       const response = await getUsers();
-
-      console.log(
-        "[UsuariosAdmin] RESPOSTA DO SERVICE:",
-        response,
-      );
-
-      /*
-       * O service pode devolver:
-       *
-       * [
-       *   {...},
-       *   {...}
-       * ]
-       *
-       * ou:
-       *
-       * {
-       *   results: [...]
-       * }
-       */
 
       const data = Array.isArray(response)
         ? response
@@ -116,36 +92,9 @@ export default function UsuariosAdmin() {
           ? response.results
           : [];
 
-      console.log(
-        "[UsuariosAdmin] USUÁRIOS RECEBIDOS:",
-        data,
-      );
-
-      /*
-       * O endpoint atualmente devolve usuários com:
-       *
-       * id
-       * username
-       * email
-       * first_name
-       * last_name
-       * is_admin
-       * is_staff
-       * is_superuser
-       *
-       * Como a resposta não possui created_at/date_joined,
-       * usamos o ID para garantir que o último usuário
-       * registado apareça primeiro.
-       */
-
       const normalizedUsers = [...data].sort(
         (a, b) =>
           Number(b.id || 0) - Number(a.id || 0),
-      );
-
-      console.log(
-        "[UsuariosAdmin] USUÁRIOS ORDENADOS:",
-        normalizedUsers,
       );
 
       setUsers(normalizedUsers);
@@ -155,25 +104,11 @@ export default function UsuariosAdmin() {
         error,
       );
 
-      console.error(
-        "[UsuariosAdmin] STATUS:",
-        error.response?.status,
-      );
-
-      console.error(
-        "[UsuariosAdmin] RESPOSTA DA API:",
-        error.response?.data,
-      );
-
       toast.error(
         "Não foi possível carregar os usuários.",
       );
     } finally {
       setIsLoading(false);
-
-      console.log(
-        "[UsuariosAdmin] BUSCA DE USUÁRIOS FINALIZADA.",
-      );
     }
   };
 
@@ -253,11 +188,6 @@ export default function UsuariosAdmin() {
       "Cadastrando usuário...",
     );
 
-    console.log(
-      "[UsuariosAdmin] DADOS DO FORMULÁRIO:",
-      data,
-    );
-
     try {
       const payload = {
         username: data.username,
@@ -267,25 +197,7 @@ export default function UsuariosAdmin() {
         last_name: data.last_name,
       };
 
-      console.log(
-        "[UsuariosAdmin] PAYLOAD DE REGISTRO:",
-        payload,
-      );
-
-      const response = await registerUser(payload);
-
-      console.log(
-        "[UsuariosAdmin] USUÁRIO CRIADO:",
-        response,
-      );
-
-      /*
-       * Depois do cadastro buscamos novamente a lista.
-       *
-       * Assim não dependemos do formato da resposta do
-       * endpoint de registro e garantimos que o novo
-       * usuário apareça no topo através do ID.
-       */
+      await registerUser(payload);
 
       await fetchUsers();
 
@@ -305,49 +217,7 @@ export default function UsuariosAdmin() {
         error,
       );
 
-      console.error(
-        "[UsuariosAdmin] STATUS:",
-        error.response?.status,
-      );
-
-      console.error(
-        "[UsuariosAdmin] RESPOSTA DA API:",
-        error.response?.data,
-      );
-
       toast.dismiss(loadingToast);
-
-      const apiError = error.response?.data;
-
-      if (apiError?.username) {
-        toast.error(
-          Array.isArray(apiError.username)
-            ? apiError.username[0]
-            : apiError.username,
-        );
-
-        return;
-      }
-
-      if (apiError?.email) {
-        toast.error(
-          Array.isArray(apiError.email)
-            ? apiError.email[0]
-            : apiError.email,
-        );
-
-        return;
-      }
-
-      if (apiError?.password) {
-        toast.error(
-          Array.isArray(apiError.password)
-            ? apiError.password[0]
-            : apiError.password,
-        );
-
-        return;
-      }
 
       toast.error(
         "Não foi possível cadastrar o usuário.",
@@ -402,36 +272,16 @@ export default function UsuariosAdmin() {
       "Redefinindo senha...",
     );
 
-    console.log(
-      "[UsuariosAdmin] RESET DE SENHA PARA:",
-      selectedUser,
-    );
-
     try {
       const payload = {
         password: data.password,
       };
 
-      console.log(
-        "[UsuariosAdmin] PAYLOAD RESET PASSWORD:",
-        {
-          userId: selectedUser.id,
-          payload: {
-            password: "***",
-          },
-        },
-      );
-
       setIsResetting(true);
 
-      const response = await resetUserPassword(
+      await resetUserPassword(
         selectedUser.id,
         payload,
-      );
-
-      console.log(
-        "[UsuariosAdmin] RESPOSTA RESET PASSWORD:",
-        response,
       );
 
       toast.dismiss(loadingToast);
@@ -450,29 +300,7 @@ export default function UsuariosAdmin() {
         error,
       );
 
-      console.error(
-        "[UsuariosAdmin] STATUS:",
-        error.response?.status,
-      );
-
-      console.error(
-        "[UsuariosAdmin] RESPOSTA DA API:",
-        error.response?.data,
-      );
-
       toast.dismiss(loadingToast);
-
-      const apiError = error.response?.data;
-
-      if (apiError?.password) {
-        toast.error(
-          Array.isArray(apiError.password)
-            ? apiError.password[0]
-            : apiError.password,
-        );
-
-        return;
-      }
 
       toast.error(
         "Não foi possível redefinir a senha.",
@@ -630,16 +458,19 @@ export default function UsuariosAdmin() {
 
                       <td className="px-5 py-4">
                         <div className="flex justify-end">
-                          <button
-                            type="button"
-                            onClick={() =>
-                              handleOpenReset(user)
-                            }
-                            title="Resetar senha"
-                            className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-lg border border-blue-100 bg-blue-50 text-blue-700 transition hover:bg-blue-100"
-                          >
-                            <i className="fas fa-key text-xs" />
-                          </button>
+                          {!user.is_admin &&
+                            !user.is_superuser && (
+                              <button
+                                type="button"
+                                onClick={() =>
+                                  handleOpenReset(user)
+                                }
+                                title="Resetar senha"
+                                className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-lg border border-blue-100 bg-blue-50 text-blue-700 transition hover:bg-blue-100"
+                              >
+                                <i className="fas fa-key text-xs" />
+                              </button>
+                            )}
                         </div>
                       </td>
                     </tr>

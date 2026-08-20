@@ -6,6 +6,7 @@ import toast from "react-hot-toast";
 import LoginBg from "../../assets/img/login.jpg";
 import { loginSchema } from "../../validations/loginSchema";
 import { login } from "../../services/authService";
+import { getCurrentUser } from "../../services/userService";
 import { saveTokens } from "../../services/authStorage";
 
 export default function Login() {
@@ -39,14 +40,39 @@ export default function Login() {
         refresh: response.refresh,
       });
 
-      toast.dismiss(loadingToast);
+      // Buscar informações do usuário autenticado
+      const user = await getCurrentUser();
 
+      //console.log("[Login] USUÁRIO AUTENTICADO:", user);
+
+      toast.dismiss(loadingToast);
       toast.success("Login realizado com sucesso!");
 
-      //navigate("/my-dashboard", { replace: true });
-      const from = location.state?.from?.pathname || "/my-dashboard";
+      const from = location.state?.from?.pathname;
 
-      navigate(from, { replace: true });
+      // ADMIN
+      /*if (user.is_admin || user.is_superuser) {
+        navigate(from || "/dashboard/admin/", { replace: true });
+        return;
+      }*/
+      if (user.is_admin || user.is_superuser) {
+        const destination = from?.startsWith("/dashboard/admin/")
+          ? from
+          : "/dashboard/admin/";
+
+        navigate(destination, { replace: true });
+
+        return;
+      }
+
+      // MORADOR
+      //navigate(from || "/my-dashboard", { replace: true });
+
+      const destination = from?.startsWith("/my-dashboard")
+      ? from
+      : "/my-dashboard";
+
+      navigate(destination, { replace: true });
     } catch (error) {
       console.error("Erro no login:", error);
 
@@ -59,7 +85,8 @@ export default function Login() {
 
       if (error.response?.status === 400) {
         toast.error(
-          error.response?.data?.detail || "Os dados enviados são inválidos.",
+          error.response?.data?.detail ||
+            "Os dados enviados são inválidos.",
         );
         return;
       }

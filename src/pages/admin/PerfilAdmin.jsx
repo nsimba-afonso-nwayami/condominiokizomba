@@ -44,9 +44,9 @@ export default function PerfilAdmin() {
     try {
       setIsLoading(true);
 
-      console.log(
+      /*console.log(
         "[PerfilAdmin] BUSCANDO DADOS DO ADMIN..."
-      );
+      );*/
 
       const response = await getCurrentUser();
 
@@ -57,7 +57,7 @@ export default function PerfilAdmin() {
 
       setUser(response);
     } catch (error) {
-      console.error(
+      /*console.error(
         "[PerfilAdmin] ERRO AO BUSCAR ADMIN:",
         error,
       );
@@ -65,7 +65,7 @@ export default function PerfilAdmin() {
       console.error(
         "[PerfilAdmin] RESPOSTA DA API:",
         error.response?.data,
-      );
+      );*/
 
       toast.error(
         "Não foi possível carregar os dados do perfil.",
@@ -90,16 +90,16 @@ export default function PerfilAdmin() {
         new_password: data.newPassword,
       };
 
-      console.log(
+      /*console.log(
         "[PerfilAdmin] DADOS PARA ALTERAÇÃO DE SENHA:",
         payload,
-      );
+      );*/
 
       await changePassword(payload);
 
-      console.log(
+      /*console.log(
         "[PerfilAdmin] SENHA ALTERADA COM SUCESSO.",
-      );
+      );*/
 
       toast.dismiss(loadingToast);
 
@@ -116,7 +116,7 @@ export default function PerfilAdmin() {
         confirmPassword: "",
       });
     } catch (error) {
-      console.error(
+      /*console.error(
         "[PerfilAdmin] ERRO AO ALTERAR SENHA:",
         error,
       );
@@ -124,44 +124,12 @@ export default function PerfilAdmin() {
       console.error(
         "[PerfilAdmin] RESPOSTA DA API:",
         error.response?.data,
-      );
+      );*/
 
       toast.dismiss(loadingToast);
 
-      const apiError = error.response?.data;
-
-      if (apiError?.old_password) {
-        toast.error(
-          Array.isArray(apiError.old_password)
-            ? apiError.old_password[0]
-            : apiError.old_password,
-        );
-
-        return;
-      }
-
-      if (apiError?.new_password) {
-        toast.error(
-          Array.isArray(apiError.new_password)
-            ? apiError.new_password[0]
-            : apiError.new_password,
-        );
-
-        return;
-      }
-
-      if (apiError?.detail) {
-        toast.error(
-          Array.isArray(apiError.detail)
-            ? apiError.detail[0]
-            : apiError.detail,
-        );
-
-        return;
-      }
-
       toast.error(
-        "Não foi possível alterar a senha.",
+        "Não foi possível alterar a senha. Verifique os dados informados e tente novamente.",
       );
     }
   };
@@ -230,7 +198,7 @@ export default function PerfilAdmin() {
                 </label>
 
                 <div className="flex min-h-[48px] items-center rounded-xl border border-slate-200 bg-white px-4 text-sm font-medium text-slate-800">
-                  {user.username || "—"}
+                  {user.username || "Não informado"}
                 </div>
               </div>
 
@@ -242,7 +210,7 @@ export default function PerfilAdmin() {
                 </label>
 
                 <div className="flex min-h-[48px] items-center rounded-xl border border-slate-200 bg-white px-4 text-sm text-slate-800">
-                  {user.email || "—"}
+                  {user.email || "Não informado"}
                 </div>
               </div>
 
@@ -254,7 +222,7 @@ export default function PerfilAdmin() {
                 </label>
 
                 <div className="flex min-h-[48px] items-center rounded-xl border border-slate-200 bg-white px-4 text-sm text-slate-800">
-                  {user.first_name || "—"}
+                  {user.first_name || "Não informado"}
                 </div>
               </div>
 
@@ -266,7 +234,7 @@ export default function PerfilAdmin() {
                 </label>
 
                 <div className="flex min-h-[48px] items-center rounded-xl border border-slate-200 bg-white px-4 text-sm text-slate-800">
-                  {user.last_name || "—"}
+                  {user.last_name || "Não informado"}
                 </div>
               </div>
 

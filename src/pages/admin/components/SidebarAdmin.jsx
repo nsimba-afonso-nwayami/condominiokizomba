@@ -1,7 +1,11 @@
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
+
+import { logout } from "../../../services/authService";
 
 export default function SidebarAdmin({ sidebarOpen, setSidebarOpen }) {
   const location = useLocation();
+  const navigate = useNavigate();
 
   const isActive = (path) => location.pathname === path;
 
@@ -16,6 +20,16 @@ export default function SidebarAdmin({ sidebarOpen, setSidebarOpen }) {
 
   const closeSidebarMobile = () => {
     setSidebarOpen(false);
+  };
+
+  const handleLogout = () => {
+    logout();
+
+    setSidebarOpen(false);
+
+    toast.success("Sessão terminada com sucesso.");
+
+    navigate("/login", { replace: true });
   };
 
   return (
@@ -146,6 +160,7 @@ export default function SidebarAdmin({ sidebarOpen, setSidebarOpen }) {
         <div className="pt-4 border-t border-blue-800/60">
           <button
             type="button"
+            onClick={handleLogout}
             className="
               flex items-center gap-3
               cursor-pointer w-full

@@ -47,8 +47,8 @@ export const changePasswordSchema = yup.object({
     .string()
     .required("A nova senha é obrigatória.")
     .min(
-      6,
-      "A nova senha deve ter pelo menos 6 caracteres.",
+      8,
+      "A nova senha deve ter pelo menos 8 caracteres.",
     ),
 
   confirmPassword: yup

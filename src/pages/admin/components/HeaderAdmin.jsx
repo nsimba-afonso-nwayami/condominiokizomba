@@ -1,10 +1,52 @@
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+
+import { getCurrentUser } from "../../../services/userService";
 
 export default function HeaderAdmin({
   sidebarOpen,
   setSidebarOpen,
   title,
 }) {
+
+  const [user, setUser] = useState(null);
+
+  // BUSCAR USUÁRIO AUTENTICADO
+
+  useEffect(() => {
+    const fetchCurrentUser = async () => {
+      try {
+        const response = await getCurrentUser();
+
+        setUser(response);
+      } catch (error) {
+        console.error(
+          "[HeaderAdmin] ERRO AO BUSCAR USUÁRIO AUTENTICADO:",
+          error,
+        );
+      }
+    };
+
+    fetchCurrentUser();
+  }, []);
+
+  // NOME DO USUÁRIO
+
+  const userName =
+    [user?.first_name, user?.last_name]
+      .filter(Boolean)
+      .join(" ") ||
+    user?.username ||
+    "Administrador";
+
+  // TIPO DE CONTA
+
+  const userRole = user?.is_superuser
+    ? "Super Administrador"
+    : user?.is_admin
+      ? "Administrador"
+      : "Usuário";
+
   return (
     <header
       className="
@@ -58,10 +100,10 @@ export default function HeaderAdmin({
         <div className="flex items-center gap-3">
           <div className="text-right hidden sm:block">
             <p className="text-sm text-slate-50 font-bold leading-tight">
-              Adriano
+              {userName}
             </p>
             <p className="text-[10px] text-sky-400/80 uppercase font-bold tracking-wider">
-              Administrador
+              {userRole}
             </p>
           </div>
 

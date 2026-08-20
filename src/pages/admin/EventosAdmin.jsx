@@ -261,14 +261,14 @@ export default function EventosAdmin() {
         },
       );
     } catch (error) {
-      console.error(
+      /*console.error(
         isEditing
           ? "ERRO AO EDITAR EVENTO:"
           : "ERRO AO CADASTRAR EVENTO:",
         error,
       );
 
-      console.error("RESPOSTA DA API:", error.response?.data);
+      console.error("RESPOSTA DA API:", error.response?.data);*/
 
       toast.dismiss(loadingToast);
 
@@ -316,8 +316,8 @@ export default function EventosAdmin() {
         duration: 5000,
       });
     } catch (error) {
-      console.error("ERRO AO ELIMINAR EVENTO:", error);
-      console.error("RESPOSTA DA API:", error.response?.data);
+      /*console.error("ERRO AO ELIMINAR EVENTO:", error);
+      console.error("RESPOSTA DA API:", error.response?.data);*/
 
       toast.dismiss(loadingToast);
 

@@ -26,7 +26,7 @@ export default function PublicEvent() {
           convidados: data.convidado,
         });
       } catch (error) {
-        console.error("Erro ao carregar evento:", error);
+        //console.error("Erro ao carregar evento:", error);
         toast.error("Não foi possível carregar o evento.");
       } finally {
         setLoading(false);
