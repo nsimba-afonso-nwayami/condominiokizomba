@@ -20,7 +20,10 @@ export default function QRCode({ item, size = 80 }) {
   return (
     <>
       {/* QR CODE ORIGINAL */}
-      <div className="hidden">
+      <div
+        id={`qr-code-${item.id}`}
+        className="hidden"
+      >
         <QRCodeCanvas
           ref={canvasRef}
           value={qrValue}
