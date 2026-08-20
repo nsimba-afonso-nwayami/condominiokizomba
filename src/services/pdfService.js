@@ -34,19 +34,37 @@ export const generateEventPDF = (event) => {
 
   const convidados = pdf.splitTextToSize(
     event.convidados || "Nenhum convidado informado.",
-    160,
+    100,
   );
 
   pdf.text(convidados, 20, 126);
 
-  const qrContainer = document.getElementById(`qr-code-${event.id}`);
+  // =========================================================
+  // QR CODE
+  // =========================================================
+
+  const qrContainer = document.getElementById(
+    `qr-code-${event.id}`,
+  );
+
   const qrCanvas = qrContainer?.querySelector("canvas");
 
   if (qrCanvas) {
     const qrDataUrl = qrCanvas.toDataURL("image/png");
 
-    pdf.addImage(qrDataUrl, "PNG", 135, 45, 55, 55);
+    pdf.addImage(
+      qrDataUrl,
+      "PNG",
+      130,
+      45,
+      60,
+      60,
+    );
   }
+
+  // =========================================================
+  // RODAPÉ
+  // =========================================================
 
   pdf.setFontSize(9);
   pdf.setTextColor(120, 120, 120);
