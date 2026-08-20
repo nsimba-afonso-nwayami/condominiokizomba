@@ -11,7 +11,6 @@ import QRCode from "./components/QRCode";
 import {
   getEvents,
   createEvent,
-  editEvent,
   deleteEvent,
 } from "../../services/eventService";
 import { generateEventPDF } from "../../services/pdfService";
@@ -27,7 +26,6 @@ export default function EventosAdmin() {
 
   const [selectedEvent, setSelectedEvent] = useState(null);
 
-  const [isEditing, setIsEditing] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [isDeleting, setIsDeleting] = useState(false);
 
@@ -156,7 +154,6 @@ export default function EventosAdmin() {
   // =========================================================
 
   const handleOpenCreate = () => {
-    setIsEditing(false);
     setSelectedEvent(null);
 
     reset({
@@ -173,36 +170,11 @@ export default function EventosAdmin() {
   };
 
   // =========================================================
-  // ABRIR MODAL PARA EDITAR
-  // =========================================================
-
-  const handleOpenEdit = (event) => {
-    setIsEditing(true);
-    setSelectedEvent(event);
-
-    reset({
-      morador: event.morador || "",
-      tipoEvento: event.tipoEvento || "",
-      data: event.data || "",
-      hora: event.hora || "",
-      horaFim: event.horaFim || "",
-      local: event.local || "",
-      convidados: event.convidados || "",
-    });
-
-    setIsModalOpen(true);
-  };
-
-  // =========================================================
-  // CRIAR / EDITAR
+  // CRIAR EVENTO
   // =========================================================
 
   const handleSubmitEvent = async (data) => {
-    const loadingToast = toast.loading(
-      isEditing
-        ? "Atualizando evento..."
-        : "Cadastrando evento...",
-    );
+    const loadingToast = toast.loading("Cadastrando evento...");
 
     try {
       const payload = {
@@ -215,13 +187,7 @@ export default function EventosAdmin() {
         convidado: data.convidados,
       };
 
-      let response;
-
-      if (isEditing) {
-        response = await editEvent(selectedEvent.id, payload);
-      } else {
-        response = await createEvent(payload);
-      }
+      const response = await createEvent(payload);
 
       const normalizedEvent = {
         id: response.id,
@@ -234,17 +200,7 @@ export default function EventosAdmin() {
         convidados: response.convidado,
       };
 
-      if (isEditing) {
-        setEvents((prev) =>
-          prev.map((item) =>
-            item.id === normalizedEvent.id
-              ? normalizedEvent
-              : item,
-          ),
-        );
-      } else {
-        setEvents((prev) => [normalizedEvent, ...prev]);
-      }
+      setEvents((prev) => [normalizedEvent, ...prev]);
 
       reset();
       setSelectedEvent(null);
@@ -252,31 +208,16 @@ export default function EventosAdmin() {
 
       toast.dismiss(loadingToast);
 
-      toast.success(
-        isEditing
-          ? "Evento atualizado com sucesso!"
-          : "Evento cadastrado com sucesso!",
-        {
-          duration: 5000,
-        },
-      );
+      toast.success("Evento cadastrado com sucesso!", {
+        duration: 5000,
+      });
     } catch (error) {
-      /*console.error(
-        isEditing
-          ? "ERRO AO EDITAR EVENTO:"
-          : "ERRO AO CADASTRAR EVENTO:",
-        error,
-      );
-
+      /*console.error("ERRO AO CADASTRAR EVENTO:", error);
       console.error("RESPOSTA DA API:", error.response?.data);*/
 
       toast.dismiss(loadingToast);
 
-      toast.error(
-        isEditing
-          ? "Não foi possível atualizar o evento."
-          : "Não foi possível cadastrar o evento.",
-      );
+      toast.error("Não foi possível cadastrar o evento.");
     }
   };
 
@@ -512,15 +453,6 @@ export default function EventosAdmin() {
                         <div className="flex justify-end gap-2">
                           <button
                             type="button"
-                            onClick={() => handleOpenEdit(item)}
-                            title="Editar evento"
-                            className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-lg border border-blue-100 bg-blue-50 text-blue-700 transition hover:bg-blue-100"
-                          >
-                            <i className="fas fa-pen text-xs" />
-                          </button>
-
-                          <button
-                            type="button"
                             onClick={() => handleOpenDelete(item)}
                             title="Eliminar evento"
                             className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-lg border border-red-100 bg-red-50 text-red-600 transition hover:bg-red-100"
@@ -538,7 +470,7 @@ export default function EventosAdmin() {
         </section>
 
         {/* =====================================================
-            MODAL CRIAR / EDITAR
+            MODAL CRIAR EVENTO
         ====================================================== */}
 
         <Modal
@@ -550,7 +482,7 @@ export default function EventosAdmin() {
               reset();
             }
           }}
-          title={isEditing ? "Editar Evento" : "Novo Evento"}
+          title="Novo Evento"
           icon="fas fa-calendar-plus"
         >
           <form
@@ -559,9 +491,7 @@ export default function EventosAdmin() {
           >
             <div>
               <h3 className="text-lg font-bold text-slate-900">
-                {isEditing
-                  ? "Atualizar dados do evento"
-                  : "Dados do evento"}
+                Dados do evento
               </h3>
 
               <p className="mt-1 text-sm text-slate-500">
@@ -802,19 +732,12 @@ export default function EventosAdmin() {
                 {isSubmitting ? (
                   <>
                     <i className="fas fa-spinner fa-spin" />
-                    {isEditing ? "Atualizando..." : "Cadastrando..."}
+                    Cadastrando...
                   </>
                 ) : (
                   <>
-                    <i
-                      className={`fas ${
-                        isEditing ? "fa-save" : "fa-plus"
-                      }`}
-                    />
-
-                    {isEditing
-                      ? "Guardar alterações"
-                      : "Cadastrar evento"}
+                    <i className="fas fa-plus" />
+                    Cadastrar evento
                   </>
                 )}
               </button>
@@ -844,54 +767,15 @@ export default function EventosAdmin() {
                 </div>
               </div>
 
-              {/* INFORMAÇÕES */}
-              <div className="rounded-2xl border border-slate-200 bg-white p-5">
-                <div className="mb-4">
-                  <span className="rounded-full bg-blue-50 px-3 py-1 text-[11px] font-bold text-blue-800">
-                    {selectedEvent.tipoEvento}
-                  </span>
+              {/* MORADOR */}
+              <div className="text-center">
+                <span className="block text-[11px] font-bold uppercase tracking-wide text-slate-400">
+                  Morador / Resident
+                </span>
 
-                  <h3 className="mt-3 text-lg font-bold text-slate-900">
-                    {selectedEvent.morador}
-                  </h3>
-
-                  <p className="mt-1 text-sm text-slate-500">
-                    <i className="fa-solid fa-location-dot mr-1 text-blue-700" />
-                    {selectedEvent.local}
-                  </p>
-                </div>
-
-                <div className="grid grid-cols-2 gap-4 border-t border-slate-100 pt-4">
-                  <div>
-                    <span className="block text-[11px] font-bold uppercase tracking-wide text-slate-400">
-                      Data
-                    </span>
-
-                    <p className="mt-1 text-sm font-semibold text-slate-700">
-                      {formatDate(selectedEvent.data)}
-                    </p>
-                  </div>
-
-                  <div>
-                    <span className="block text-[11px] font-bold uppercase tracking-wide text-slate-400">
-                      Horário
-                    </span>
-
-                    <p className="mt-1 text-sm font-semibold text-slate-700">
-                      {selectedEvent.hora} - {selectedEvent.horaFim}
-                    </p>
-                  </div>
-
-                  <div className="col-span-2">
-                    <span className="block text-[11px] font-bold uppercase tracking-wide text-slate-400">
-                      Convidados
-                    </span>
-
-                    <p className="mt-1 text-sm font-semibold text-slate-700">
-                      {selectedEvent.convidados}
-                    </p>
-                  </div>
-                </div>
+                <h3 className="mt-1 text-lg font-bold text-slate-900">
+                  {selectedEvent.morador}
+                </h3>
               </div>
 
               {/* PDF */}
