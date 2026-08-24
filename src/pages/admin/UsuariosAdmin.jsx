@@ -313,7 +313,7 @@ export default function UsuariosAdmin() {
   return (
     <>
       <title>
-        Usuários | Admin | Condomínio Kizomba
+        Usuários | Admin | Sistema de Gestão de Acesso
       </title>
 
       <AdminLayout title="Usuários">
@@ -416,7 +416,7 @@ export default function UsuariosAdmin() {
             </div>
           ) : (
             <div className="overflow-x-auto">
-              <table className="w-full min-w-[900px] text-left">
+              <table className="w-full min-w-225 text-left">
                 <thead className="border-b border-neutral-200 bg-neutral-100/70">
                   <tr>
                     <th className="px-5 py-4 text-xs font-bold uppercase tracking-wider text-neutral-500">

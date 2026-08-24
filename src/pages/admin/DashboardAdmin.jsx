@@ -76,7 +76,7 @@ export default function DashboardAdmin() {
 
   return (
     <>
-      <title>Início | Admin | Condomínio Kizomba</title>
+      <title>Início | Admin | Sistema de Gestão de Acesso</title>
 
       <AdminLayout title="Início">
         {/* WELCOME HEADER */}

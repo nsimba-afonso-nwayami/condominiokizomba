@@ -137,7 +137,7 @@ export default function PerfilAdmin() {
   return (
     <>
       <title>
-        Perfil | Admin | Condomínio Kizomba
+        Perfil | Admin | Sistema de Gestão de Acesso
       </title>
 
       <AdminLayout title="Perfil">
@@ -197,7 +197,7 @@ export default function PerfilAdmin() {
                   Username
                 </label>
 
-                <div className="flex min-h-[48px] items-center rounded-xl border border-slate-200 bg-white px-4 text-sm font-medium text-slate-800">
+                <div className="flex min-h-12 items-center rounded-xl border border-slate-200 bg-white px-4 text-sm font-medium text-slate-800">
                   {user.username || "Não informado"}
                 </div>
               </div>

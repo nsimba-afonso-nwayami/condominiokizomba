@@ -6,7 +6,7 @@ export default function NotFoundAdmin() {
   return (
     <>
       <title>
-        Página não encontrada | Admin | Condomínio Kizomba
+        Página não encontrada | Admin | Sistema de Gestão de Acesso
       </title>
 
       <AdminLayout title="Página não encontrada">

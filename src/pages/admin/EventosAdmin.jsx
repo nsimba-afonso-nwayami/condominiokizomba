@@ -270,7 +270,7 @@ export default function EventosAdmin() {
 
   return (
     <>
-      <title>Eventos | Admin | Condomínio Kizomba</title>
+      <title>Eventos | Admin | Sistema de Gestão de Acesso</title>
 
       <AdminLayout title="Eventos">
         {/* HEADER */}
