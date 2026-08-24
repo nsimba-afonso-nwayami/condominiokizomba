@@ -8,7 +8,7 @@ export default function QRCode({ item, size = 80 }) {
   // LINKS DO SISTEMA
 
   // Produção
-  const productionUrl = `https://sistemagestaodeacesso.com/evento/${item.id}`;
+  const productionUrl = `https://condominiokizomba.com/evento/${item.id}`;
 
   // Vercel
   const vercelUrl = `https://condominiokizomba.vercel.app/evento/${item.id}`;
@@ -44,14 +44,11 @@ export default function QRCode({ item, size = 80 }) {
 
     Convidados / Guests:
     ${item.convidados || "Não informado / Not informed"}
-
-    Link do evento / Event link:
-    ${eventUrl}
     `.trim();
 
-  // =========================================================
+    //Link do evento / Event link: ${eventUrl}
+
   // RESOLUÇÃO DO QR CODE
-  // =========================================================
   //
   // A imagem visual pode ser pequena (80px, 240px etc.),
   // mas o canvas original será sempre gerado em alta resolução.
