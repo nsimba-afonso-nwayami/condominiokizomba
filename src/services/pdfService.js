@@ -10,81 +10,48 @@ export const generateEventPDF = (event) => {
   const pageWidth = pdf.internal.pageSize.getWidth();
   const pageHeight = pdf.internal.pageSize.getHeight();
 
-  // =========================================================
   // CORES
-  // =========================================================
 
   const blueDark = [30, 58, 138];
-  const blue = [37, 99, 235];
-  const slate = [71, 85, 105];
-  const lightSlate = [148, 163, 184];
-  const border = [226, 232, 240];
   const white = [255, 255, 255];
+  const border = [226, 232, 240];
 
-  // =========================================================
   // FUNDO
-  // =========================================================
 
   pdf.setFillColor(...white);
   pdf.rect(0, 0, pageWidth, pageHeight, "F");
 
-  // =========================================================
   // CABEÇALHO
-  // =========================================================
 
   pdf.setFillColor(...blueDark);
   pdf.rect(0, 0, pageWidth, 38, "F");
 
   pdf.setFont("helvetica", "bold");
-  pdf.setFontSize(19);
+  pdf.setFontSize(18);
   pdf.setTextColor(...white);
 
   pdf.text(
-    "Condomínio Kizomba",
+    "Sistema de Gestão de Acesso",
     pageWidth / 2,
-    17,
-    { align: "center" },
+    16,
+    {
+      align: "center",
+    },
   );
 
   pdf.setFont("helvetica", "normal");
   pdf.setFontSize(9);
 
   pdf.text(
-    "Comprovativo de acesso",
+    "Access Management System",
     pageWidth / 2,
-    26,
-    { align: "center" },
+    25,
+    {
+      align: "center",
+    },
   );
 
-  // =========================================================
-  // NOME DO MORADOR
-  // =========================================================
-
-  pdf.setTextColor(...slate);
-  pdf.setFont("helvetica", "normal");
-  pdf.setFontSize(9);
-
-  pdf.text(
-    "MORADOR",
-    pageWidth / 2,
-    55,
-    { align: "center" },
-  );
-
-  pdf.setFont("helvetica", "bold");
-  pdf.setFontSize(16);
-  pdf.setTextColor(...blueDark);
-
-  pdf.text(
-    event.morador || "Morador",
-    pageWidth / 2,
-    64,
-    { align: "center" },
-  );
-
-  // =========================================================
   // QR CODE
-  // =========================================================
 
   const qrContainer = document.getElementById(
     `qr-code-${event.id}`,
@@ -103,39 +70,53 @@ export const generateEventPDF = (event) => {
 
   const qrDataUrl = qrCanvas.toDataURL("image/png");
 
-  const qrSize = 105;
+  // TAMANHO DO QR CODE
+
+  const qrSize = 80;
+
+  const framePadding = 6;
+
+  const frameSize = qrSize + framePadding * 2;
 
   const qrX = (pageWidth - qrSize) / 2;
+
   const qrY = 78;
 
-  // Moldura externa
+  const frameX = (pageWidth - frameSize) / 2;
+
+  const frameY = qrY - framePadding;
+
+  // MOLDURA
+
   pdf.setDrawColor(...border);
   pdf.setLineWidth(0.5);
 
   pdf.roundedRect(
-    qrX - 10,
-    qrY - 10,
-    qrSize + 20,
-    qrSize + 20,
-    6,
-    6,
+    frameX,
+    frameY,
+    frameSize,
+    frameSize,
+    4,
+    4,
     "S",
   );
 
-  // Área branca do QR
+  // FUNDO BRANCO
+
   pdf.setFillColor(...white);
 
   pdf.roundedRect(
-    qrX - 6,
-    qrY - 6,
-    qrSize + 12,
-    qrSize + 12,
+    frameX,
+    frameY,
+    frameSize,
+    frameSize,
     4,
     4,
     "F",
   );
 
-  // QR Code
+  // QR CODE
+
   pdf.addImage(
     qrDataUrl,
     "PNG",
@@ -145,83 +126,7 @@ export const generateEventPDF = (event) => {
     qrSize,
   );
 
-  // =========================================================
-  // INSTRUÇÃO
-  // =========================================================
-
-  const instructionY = qrY + qrSize + 28;
-
-  pdf.setFont("helvetica", "bold");
-  pdf.setFontSize(11);
-  pdf.setTextColor(...slate);
-
-  pdf.text(
-    "Apresente este QR Code na entrada",
-    pageWidth / 2,
-    instructionY,
-    { align: "center" },
-  );
-
-  pdf.setFont("helvetica", "normal");
-  pdf.setFontSize(9);
-  pdf.setTextColor(...lightSlate);
-
-  pdf.text(
-    "O código será utilizado para validar o acesso ao evento.",
-    pageWidth / 2,
-    instructionY + 7,
-    { align: "center" },
-  );
-
-  // =========================================================
-  // ID DO EVENTO
-  // =========================================================
-
-  pdf.setFont("helvetica", "normal");
-  pdf.setFontSize(8);
-  pdf.setTextColor(...lightSlate);
-
-  pdf.text(
-    `Evento #${event.id}`,
-    pageWidth / 2,
-    pageHeight - 22,
-    { align: "center" },
-  );
-
-  // =========================================================
-  // RODAPÉ
-  // =========================================================
-
-  pdf.setDrawColor(...border);
-  pdf.setLineWidth(0.3);
-
-  pdf.line(
-    20,
-    pageHeight - 16,
-    pageWidth - 20,
-    pageHeight - 16,
-  );
-
-  pdf.setFont("helvetica", "normal");
-  pdf.setFontSize(7.5);
-  pdf.setTextColor(...lightSlate);
-
-  pdf.text(
-    "Condomínio Kizomba",
-    20,
-    pageHeight - 9,
-  );
-
-  pdf.text(
-    "Documento digital",
-    pageWidth - 20,
-    pageHeight - 9,
-    { align: "right" },
-  );
-
-  // =========================================================
   // DOWNLOAD
-  // =========================================================
 
   pdf.save(`qrcode-evento-${event.id}.pdf`);
 };
