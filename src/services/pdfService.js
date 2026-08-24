@@ -30,40 +30,25 @@ export const generateEventPDF = (event) => {
   pdf.setFontSize(18);
   pdf.setTextColor(...white);
 
-  pdf.text(
-    "Sistema de Gestão de Acesso",
-    pageWidth / 2,
-    16,
-    {
-      align: "center",
-    },
-  );
+  pdf.text("Sistema de Gestão de Eventos", pageWidth / 2, 16, {
+    align: "center",
+  });
 
   pdf.setFont("helvetica", "normal");
   pdf.setFontSize(9);
 
-  pdf.text(
-    "Access Management System",
-    pageWidth / 2,
-    25,
-    {
-      align: "center",
-    },
-  );
+  pdf.text("Event Management System", pageWidth / 2, 25, {
+    align: "center",
+  });
 
   // QR CODE
 
-  const qrContainer = document.getElementById(
-    `qr-code-${event.id}`,
-  );
+  const qrContainer = document.getElementById(`qr-code-${event.id}`);
 
   const qrCanvas = qrContainer?.querySelector("canvas");
 
   if (!qrCanvas) {
-    console.error(
-      "QR Code não encontrado para o evento:",
-      event.id,
-    );
+    console.error("QR Code não encontrado para o evento:", event.id);
 
     return;
   }
@@ -91,40 +76,17 @@ export const generateEventPDF = (event) => {
   pdf.setDrawColor(...border);
   pdf.setLineWidth(0.5);
 
-  pdf.roundedRect(
-    frameX,
-    frameY,
-    frameSize,
-    frameSize,
-    4,
-    4,
-    "S",
-  );
+  pdf.roundedRect(frameX, frameY, frameSize, frameSize, 4, 4, "S");
 
   // FUNDO BRANCO
 
   pdf.setFillColor(...white);
 
-  pdf.roundedRect(
-    frameX,
-    frameY,
-    frameSize,
-    frameSize,
-    4,
-    4,
-    "F",
-  );
+  pdf.roundedRect(frameX, frameY, frameSize, frameSize, 4, 4, "F");
 
   // QR CODE
 
-  pdf.addImage(
-    qrDataUrl,
-    "PNG",
-    qrX,
-    qrY,
-    qrSize,
-    qrSize,
-  );
+  pdf.addImage(qrDataUrl, "PNG", qrX, qrY, qrSize, qrSize);
 
   // DOWNLOAD
 

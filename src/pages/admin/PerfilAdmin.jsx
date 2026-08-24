@@ -34,6 +34,7 @@ export default function PerfilAdmin() {
 
   // =========================================================
   // BUSCAR USUÁRIO AUTENTICADO
+  // FETCH AUTHENTICATED USER
   // =========================================================
 
   useEffect(() => {
@@ -68,7 +69,7 @@ export default function PerfilAdmin() {
       );*/
 
       toast.error(
-        "Não foi possível carregar os dados do perfil.",
+        "Não foi possível carregar os dados do perfil. / Unable to load profile data.",
       );
     } finally {
       setIsLoading(false);
@@ -77,11 +78,12 @@ export default function PerfilAdmin() {
 
   // =========================================================
   // ALTERAR SENHA
+  // CHANGE PASSWORD
   // =========================================================
 
   const handleChangePassword = async (data) => {
     const loadingToast = toast.loading(
-      "Alterando senha...",
+      "Alterando senha... / Changing password...",
     );
 
     try {
@@ -104,7 +106,7 @@ export default function PerfilAdmin() {
       toast.dismiss(loadingToast);
 
       toast.success(
-        "Senha alterada com sucesso!",
+        "Senha alterada com sucesso! / Password changed successfully!",
         {
           duration: 5000,
         },
@@ -129,7 +131,7 @@ export default function PerfilAdmin() {
       toast.dismiss(loadingToast);
 
       toast.error(
-        "Não foi possível alterar a senha. Verifique os dados informados e tente novamente.",
+        "Não foi possível alterar a senha. Verifique os dados informados e tente novamente. / Unable to change the password. Check the information provided and try again.",
       );
     }
   };
@@ -137,26 +139,29 @@ export default function PerfilAdmin() {
   return (
     <>
       <title>
-        Perfil | Admin | Sistema de Gestão de Acesso
+        Perfil / Profile | Admin | Sistema de Gestão de Acesso / Access Management System
       </title>
 
-      <AdminLayout title="Perfil">
+      <AdminLayout title="Perfil / Profile">
         {/* =====================================================
             CABEÇALHO
+            HEADER
         ====================================================== */}
 
         <section className="border-b border-neutral-400/30 pb-4">
           <h1 className="text-xl font-bold tracking-tight text-blue-900 sm:text-2xl">
-            Meu Perfil
+            Meu Perfil / My Profile
           </h1>
 
           <p className="mt-0.5 text-xs text-neutral-600 sm:text-sm">
-            Consulte os seus dados e altere a sua senha.
+            Consulte os seus dados e altere a sua senha. / View your
+            information and change your password.
           </p>
         </section>
 
         {/* =====================================================
             DADOS DO USUÁRIO
+            USER INFORMATION
         ====================================================== */}
 
         <section className="rounded-2xl border border-neutral-400/40 bg-neutral-50 p-5 shadow-sm">
@@ -167,11 +172,12 @@ export default function PerfilAdmin() {
 
             <div>
               <h2 className="text-sm font-bold text-blue-900">
-                Dados do administrador
+                Dados do administrador / Administrator Information
               </h2>
 
               <p className="mt-0.5 text-xs text-neutral-600">
-                Informações da conta atualmente autenticada.
+                Informações da conta atualmente autenticada. / Information
+                about the currently authenticated account.
               </p>
             </div>
           </div>
@@ -185,7 +191,8 @@ export default function PerfilAdmin() {
               <i className="fas fa-user-slash text-3xl text-neutral-300" />
 
               <p className="mt-3 text-sm font-medium text-neutral-500">
-                Não foi possível carregar os dados do usuário.
+                Não foi possível carregar os dados do usuário. / Unable to
+                load user information.
               </p>
             </div>
           ) : (
@@ -194,11 +201,11 @@ export default function PerfilAdmin() {
 
               <div>
                 <label className="mb-2 block text-xs font-bold uppercase tracking-wide text-neutral-500">
-                  Username
+                  Username / Nome de usuário
                 </label>
 
                 <div className="flex min-h-12 items-center rounded-xl border border-slate-200 bg-white px-4 text-sm font-medium text-slate-800">
-                  {user.username || "Não informado"}
+                  {user.username || "Não informado / Not provided"}
                 </div>
               </div>
 
@@ -206,11 +213,11 @@ export default function PerfilAdmin() {
 
               <div>
                 <label className="mb-2 block text-xs font-bold uppercase tracking-wide text-neutral-500">
-                  Email
+                  Email / E-mail
                 </label>
 
                 <div className="flex min-h-[48px] items-center rounded-xl border border-slate-200 bg-white px-4 text-sm text-slate-800">
-                  {user.email || "Não informado"}
+                  {user.email || "Não informado / Not provided"}
                 </div>
               </div>
 
@@ -218,11 +225,11 @@ export default function PerfilAdmin() {
 
               <div>
                 <label className="mb-2 block text-xs font-bold uppercase tracking-wide text-neutral-500">
-                  Primeiro nome
+                  Primeiro nome / First name
                 </label>
 
                 <div className="flex min-h-[48px] items-center rounded-xl border border-slate-200 bg-white px-4 text-sm text-slate-800">
-                  {user.first_name || "Não informado"}
+                  {user.first_name || "Não informado / Not provided"}
                 </div>
               </div>
 
@@ -230,11 +237,11 @@ export default function PerfilAdmin() {
 
               <div>
                 <label className="mb-2 block text-xs font-bold uppercase tracking-wide text-neutral-500">
-                  Apelido
+                  Apelido / Last name
                 </label>
 
                 <div className="flex min-h-[48px] items-center rounded-xl border border-slate-200 bg-white px-4 text-sm text-slate-800">
-                  {user.last_name || "Não informado"}
+                  {user.last_name || "Não informado / Not provided"}
                 </div>
               </div>
 
@@ -242,17 +249,17 @@ export default function PerfilAdmin() {
 
               <div className="md:col-span-2">
                 <label className="mb-2 block text-xs font-bold uppercase tracking-wide text-neutral-500">
-                  Tipo de conta
+                  Tipo de conta / Account type
                 </label>
 
                 <div className="flex min-h-[48px] items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 text-sm font-semibold text-blue-800">
                   <i className="fas fa-shield-halved" />
 
                   {user.is_superuser
-                    ? "Super Administrador"
+                    ? "Super Administrador / Super Administrator"
                     : user.is_admin
-                      ? "Administrador"
-                      : "Usuário"}
+                      ? "Administrador / Administrator"
+                      : "Usuário / User"}
                 </div>
               </div>
             </div>
@@ -261,6 +268,7 @@ export default function PerfilAdmin() {
 
         {/* =====================================================
             ALTERAR SENHA
+            CHANGE PASSWORD
         ====================================================== */}
 
         <section className="rounded-2xl border border-neutral-400/40 bg-neutral-50 p-5 shadow-sm">
@@ -271,11 +279,12 @@ export default function PerfilAdmin() {
 
             <div>
               <h2 className="text-sm font-bold text-blue-900">
-                Alterar senha
+                Alterar senha / Change password
               </h2>
 
               <p className="mt-0.5 text-xs text-neutral-600">
-                Defina uma nova senha para a sua conta.
+                Defina uma nova senha para a sua conta. / Set a new password
+                for your account.
               </p>
             </div>
           </div>
@@ -286,20 +295,20 @@ export default function PerfilAdmin() {
             )}
             className="space-y-5"
           >
-            {/* SENHA ATUAL */}
+            {/* SENHA ATUAL / CURRENT PASSWORD */}
 
             <div>
               <label
                 htmlFor="current-password"
                 className="mb-2 block text-sm font-semibold text-slate-700"
               >
-                Senha atual
+                Senha atual / Current password
               </label>
 
               <input
                 id="current-password"
                 type="password"
-                placeholder="Digite a sua senha atual"
+                placeholder="Digite a sua senha atual / Enter your current password"
                 {...register("currentPassword")}
                 className={`w-full rounded-xl border bg-white px-4 py-3.5 text-sm text-slate-800 outline-none transition focus:ring-2 ${
                   errors.currentPassword
@@ -316,20 +325,20 @@ export default function PerfilAdmin() {
             </div>
 
             <div className="grid gap-5 md:grid-cols-2">
-              {/* NOVA SENHA */}
+              {/* NOVA SENHA / NEW PASSWORD */}
 
               <div>
                 <label
                   htmlFor="new-password"
                   className="mb-2 block text-sm font-semibold text-slate-700"
                 >
-                  Nova senha
+                  Nova senha / New password
                 </label>
 
                 <input
                   id="new-password"
                   type="password"
-                  placeholder="Digite a nova senha"
+                  placeholder="Digite a nova senha / Enter the new password"
                   {...register("newPassword")}
                   className={`w-full rounded-xl border bg-white px-4 py-3.5 text-sm text-slate-800 outline-none transition focus:ring-2 ${
                     errors.newPassword
@@ -345,20 +354,20 @@ export default function PerfilAdmin() {
                 )}
               </div>
 
-              {/* CONFIRMAR SENHA */}
+              {/* CONFIRMAR SENHA / CONFIRM PASSWORD */}
 
               <div>
                 <label
                   htmlFor="confirm-password"
                   className="mb-2 block text-sm font-semibold text-slate-700"
                 >
-                  Confirmar nova senha
+                  Confirmar nova senha / Confirm new password
                 </label>
 
                 <input
                   id="confirm-password"
                   type="password"
-                  placeholder="Digite novamente a nova senha"
+                  placeholder="Digite novamente a nova senha / Enter the new password again"
                   {...register("confirmPassword")}
                   className={`w-full rounded-xl border bg-white px-4 py-3.5 text-sm text-slate-800 outline-none transition focus:ring-2 ${
                     errors.confirmPassword
@@ -375,7 +384,7 @@ export default function PerfilAdmin() {
               </div>
             </div>
 
-            {/* BOTÃO */}
+            {/* BOTÃO / BUTTON */}
 
             <div className="flex justify-end border-t border-slate-200 pt-5">
               <button
@@ -386,12 +395,11 @@ export default function PerfilAdmin() {
                 {isSubmitting ? (
                   <>
                     <i className="fas fa-spinner fa-spin" />
-                    Alterando...
+                    Alterando... / Changing...
                   </>
                 ) : (
                   <>
-                    <i className="fas fa-key" />
-                    Alterar senha
+                    Alterar senha / Change password
                   </>
                 )}
               </button>

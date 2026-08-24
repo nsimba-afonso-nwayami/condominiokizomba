@@ -4,7 +4,7 @@ import Start from "../../components/home/Start";
 export default function Home() {
   return (
     <>
-      <title>Sistema de Gestão de Acesso por QR Code</title>
+      <title>Sistema de Gestão de Eventos</title>
 
       <Start />
 

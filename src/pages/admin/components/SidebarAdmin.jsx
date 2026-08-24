@@ -43,17 +43,18 @@ export default function SidebarAdmin({ sidebarOpen, setSidebarOpen }) {
           md:translate-x-0
         `}
       >
-        {/* CLOSE MOBILE */}
+        {/* FECHAR MENU MOBILE */}
         <button
           type="button"
           className="absolute right-4 top-4 cursor-pointer p-1 text-base text-slate-300 transition-colors hover:text-slate-50 md:hidden"
           onClick={() => setSidebarOpen(false)}
-          aria-label="Fechar menu"
+          aria-label="Fechar menu / Close menu"
+          title="Fechar menu / Close menu"
         >
-          <i className="fas fa-times"></i>
+          <i className="fas fa-times" />
         </button>
 
-        {/* LOGO / IDENTIDADE */}
+        {/* IDENTIDADE DO SISTEMA */}
         <div className="mb-8 pt-1">
           <Link
             to="/dashboard/admin/"
@@ -61,20 +62,20 @@ export default function SidebarAdmin({ sidebarOpen, setSidebarOpen }) {
             className="block"
           >
             <span className="block text-base font-bold leading-none tracking-tight text-slate-50">
-              Sistema de Gestão
+              Gestão de Eventos
             </span>
 
             <span className="mt-1 block text-xs font-semibold text-sky-400">
-              de Acesso
+              Event Management
             </span>
           </Link>
 
           <p className="mt-4 text-[10px] font-semibold uppercase tracking-wider text-slate-400">
-            Painel Administrativo
+            Painel Administrativo / Admin Panel
           </p>
         </div>
 
-        {/* NAV */}
+        {/* NAVEGAÇÃO */}
         <nav className="flex-1 space-y-1.5">
           {/* INÍCIO */}
           <Link
@@ -92,10 +93,12 @@ export default function SidebarAdmin({ sidebarOpen, setSidebarOpen }) {
               }`}
             />
 
-            <span>Início</span>
+            <span>
+              Início <span className="font-normal text-slate-400">/ Home</span>
+            </span>
           </Link>
 
-          {/* GESTÃO DE EVENTOS */}
+          {/* EVENTOS */}
           <Link
             to="/dashboard/admin/eventos"
             onClick={closeSidebarMobile}
@@ -111,10 +114,13 @@ export default function SidebarAdmin({ sidebarOpen, setSidebarOpen }) {
               }`}
             />
 
-            <span>Gestão de Eventos</span>
+            <span>
+              Eventos{" "}
+              <span className="font-normal text-slate-400">/ Events</span>
+            </span>
           </Link>
 
-          {/* GESTÃO DE USUÁRIOS */}
+          {/* UTILIZADORES */}
           <Link
             to="/dashboard/admin/usuarios"
             onClick={closeSidebarMobile}
@@ -130,7 +136,10 @@ export default function SidebarAdmin({ sidebarOpen, setSidebarOpen }) {
               }`}
             />
 
-            <span>Gestão de Usuários</span>
+            <span>
+              Utilizadores{" "}
+              <span className="font-normal text-slate-400">/ Users</span>
+            </span>
           </Link>
 
           {/* PERFIL */}
@@ -149,7 +158,10 @@ export default function SidebarAdmin({ sidebarOpen, setSidebarOpen }) {
               }`}
             />
 
-            <span>Perfil do Admin</span>
+            <span>
+              Perfil{" "}
+              <span className="font-normal text-slate-400">/ Profile</span>
+            </span>
           </Link>
         </nav>
 
@@ -169,7 +181,10 @@ export default function SidebarAdmin({ sidebarOpen, setSidebarOpen }) {
           >
             <i className="fas fa-arrow-right-from-bracket text-sm text-red-500 transition-transform group-hover:translate-x-0.5" />
 
-            <span>Sair da conta</span>
+            <span>
+              Sair da conta{" "}
+              <span className="font-normal text-slate-400">/ Sign out</span>
+            </span>
           </button>
         </div>
       </aside>

@@ -13,10 +13,7 @@ import {
   resetUserPassword,
 } from "../../services/userService";
 
-import {
-  userSchema,
-  resetPasswordSchema,
-} from "../../validations/userSchema";
+import { userSchema, resetPasswordSchema } from "../../validations/userSchema";
 
 export default function UsuariosAdmin() {
   const [users, setUsers] = useState([]);
@@ -26,8 +23,7 @@ export default function UsuariosAdmin() {
   const [search, setSearch] = useState("");
 
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isResetModalOpen, setIsResetModalOpen] =
-    useState(false);
+  const [isResetModalOpen, setIsResetModalOpen] = useState(false);
 
   const [selectedUser, setSelectedUser] = useState(null);
 
@@ -35,6 +31,7 @@ export default function UsuariosAdmin() {
 
   // =========================================================
   // FORMULÁRIO DE CADASTRO
+  // REGISTRATION FORM
   // =========================================================
 
   const {
@@ -55,15 +52,14 @@ export default function UsuariosAdmin() {
 
   // =========================================================
   // FORMULÁRIO DE RESET DE SENHA
+  // PASSWORD RESET FORM
   // =========================================================
 
   const {
     register: registerReset,
     handleSubmit: handleSubmitReset,
     reset: resetReset,
-    formState: {
-      errors: resetErrors,
-    },
+    formState: { errors: resetErrors },
   } = useForm({
     resolver: yupResolver(resetPasswordSchema),
     defaultValues: {
@@ -74,6 +70,7 @@ export default function UsuariosAdmin() {
 
   // =========================================================
   // BUSCAR USUÁRIOS
+  // FETCH USERS
   // =========================================================
 
   useEffect(() => {
@@ -93,19 +90,15 @@ export default function UsuariosAdmin() {
           : [];
 
       const normalizedUsers = [...data].sort(
-        (a, b) =>
-          Number(b.id || 0) - Number(a.id || 0),
+        (a, b) => Number(b.id || 0) - Number(a.id || 0),
       );
 
       setUsers(normalizedUsers);
     } catch (error) {
-      console.error(
-        "[UsuariosAdmin] ERRO AO BUSCAR USUÁRIOS:",
-        error,
-      );
+      console.error("[UsuariosAdmin] ERRO AO BUSCAR USUÁRIOS:", error);
 
       toast.error(
-        "Não foi possível carregar os usuários.",
+        "Não foi possível carregar os usuários. / Unable to load users.",
       );
     } finally {
       setIsLoading(false);
@@ -114,6 +107,7 @@ export default function UsuariosAdmin() {
 
   // =========================================================
   // PESQUISA
+  // SEARCH
   // =========================================================
 
   const filteredUsers = useMemo(() => {
@@ -124,17 +118,13 @@ export default function UsuariosAdmin() {
     }
 
     return users.filter((user) => {
-      const username =
-        user.username?.toLowerCase() || "";
+      const username = user.username?.toLowerCase() || "";
 
-      const email =
-        user.email?.toLowerCase() || "";
+      const email = user.email?.toLowerCase() || "";
 
-      const firstName =
-        user.first_name?.toLowerCase() || "";
+      const firstName = user.first_name?.toLowerCase() || "";
 
-      const lastName =
-        user.last_name?.toLowerCase() || "";
+      const lastName = user.last_name?.toLowerCase() || "";
 
       return (
         username.includes(searchValue) ||
@@ -147,6 +137,7 @@ export default function UsuariosAdmin() {
 
   // =========================================================
   // ABRIR MODAL DE CADASTRO
+  // OPEN REGISTRATION MODAL
   // =========================================================
 
   const handleOpenCreate = () => {
@@ -163,6 +154,7 @@ export default function UsuariosAdmin() {
 
   // =========================================================
   // FECHAR MODAL DE CADASTRO
+  // CLOSE REGISTRATION MODAL
   // =========================================================
 
   const handleCloseCreate = () => {
@@ -181,11 +173,12 @@ export default function UsuariosAdmin() {
 
   // =========================================================
   // CADASTRAR USUÁRIO
+  // REGISTER USER
   // =========================================================
 
   const handleCreateUser = async (data) => {
     const loadingToast = toast.loading(
-      "Cadastrando usuário...",
+      "Cadastrando usuário... / Registering user...",
     );
 
     try {
@@ -204,7 +197,7 @@ export default function UsuariosAdmin() {
       toast.dismiss(loadingToast);
 
       toast.success(
-        "Usuário cadastrado com sucesso!",
+        "Usuário cadastrado com sucesso! / User registered successfully!",
         {
           duration: 5000,
         },
@@ -212,28 +205,23 @@ export default function UsuariosAdmin() {
 
       handleCloseCreate();
     } catch (error) {
-      console.error(
-        "[UsuariosAdmin] ERRO AO CADASTRAR USUÁRIO:",
-        error,
-      );
+      console.error("[UsuariosAdmin] ERRO AO CADASTRAR USUÁRIO:", error);
 
       toast.dismiss(loadingToast);
 
       toast.error(
-        "Não foi possível cadastrar o usuário.",
+        "Não foi possível cadastrar o usuário. / Unable to register the user.",
       );
     }
   };
 
   // =========================================================
   // ABRIR RESET DE SENHA
+  // OPEN PASSWORD RESET
   // =========================================================
 
   const handleOpenReset = (user) => {
-    console.log(
-      "[UsuariosAdmin] USUÁRIO SELECIONADO PARA RESET:",
-      user,
-    );
+    console.log("[UsuariosAdmin] USUÁRIO SELECIONADO PARA RESET:", user);
 
     setSelectedUser(user);
 
@@ -247,6 +235,7 @@ export default function UsuariosAdmin() {
 
   // =========================================================
   // FECHAR RESET DE SENHA
+  // CLOSE PASSWORD RESET
   // =========================================================
 
   const handleCloseReset = () => {
@@ -263,13 +252,14 @@ export default function UsuariosAdmin() {
 
   // =========================================================
   // RESETAR SENHA
+  // RESET PASSWORD
   // =========================================================
 
   const handleResetPassword = async (data) => {
     if (!selectedUser) return;
 
     const loadingToast = toast.loading(
-      "Redefinindo senha...",
+      "Redefinindo senha... / Resetting password...",
     );
 
     try {
@@ -279,15 +269,12 @@ export default function UsuariosAdmin() {
 
       setIsResetting(true);
 
-      await resetUserPassword(
-        selectedUser.id,
-        payload,
-      );
+      await resetUserPassword(selectedUser.id, payload);
 
       toast.dismiss(loadingToast);
 
       toast.success(
-        "Senha redefinida com sucesso!",
+        "Senha redefinida com sucesso! / Password reset successfully!",
         {
           duration: 5000,
         },
@@ -295,15 +282,12 @@ export default function UsuariosAdmin() {
 
       handleCloseReset();
     } catch (error) {
-      console.error(
-        "[UsuariosAdmin] ERRO AO RESETAR SENHA:",
-        error,
-      );
+      console.error("[UsuariosAdmin] ERRO AO RESETAR SENHA:", error);
 
       toast.dismiss(loadingToast);
 
       toast.error(
-        "Não foi possível redefinir a senha.",
+        "Não foi possível redefinir a senha. / Unable to reset the password.",
       );
     } finally {
       setIsResetting(false);
@@ -313,10 +297,11 @@ export default function UsuariosAdmin() {
   return (
     <>
       <title>
-        Usuários | Admin | Sistema de Gestão de Acesso
+        Usuários / Users | Admin | Sistema de Gestão de Acesso / Access
+        Management System
       </title>
 
-      <AdminLayout title="Usuários">
+      <AdminLayout title="Usuários / Users">
         {/* =====================================================
             HEADER
         ====================================================== */}
@@ -324,12 +309,12 @@ export default function UsuariosAdmin() {
         <section className="flex flex-col justify-between gap-4 border-b border-neutral-400/30 pb-4 sm:flex-row sm:items-center">
           <div>
             <h1 className="text-xl font-bold tracking-tight text-blue-900 sm:text-2xl">
-              Gestão de Usuários
+              Gestão de Usuários / User Management
             </h1>
 
             <p className="mt-0.5 text-xs text-neutral-600 sm:text-sm">
-              Consulte, cadastre e gerencie os
-              usuários do condomínio.
+              Consulte, cadastre e gerencie os usuários do condomínio. / View,
+              register and manage condominium users.
             </p>
           </div>
 
@@ -339,7 +324,7 @@ export default function UsuariosAdmin() {
             className="inline-flex w-fit cursor-pointer items-center gap-2 rounded-xl bg-blue-800 px-4 py-2 text-xs font-semibold text-white shadow-sm transition-colors duration-200 hover:bg-blue-900"
           >
             <i className="fas fa-plus text-xs" />
-            Novo Usuário
+            Novo Usuário / New User
           </button>
         </section>
 
@@ -352,7 +337,7 @@ export default function UsuariosAdmin() {
             <i className="fas fa-magnifying-glass text-sm text-blue-800" />
 
             <h2 className="text-sm font-bold text-blue-900">
-              Pesquisar usuários
+              Pesquisar usuários / Search users
             </h2>
           </div>
 
@@ -362,10 +347,8 @@ export default function UsuariosAdmin() {
             <input
               type="search"
               value={search}
-              onChange={(e) =>
-                setSearch(e.target.value)
-              }
-              placeholder="Pesquisar username, nome ou email..."
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Pesquisar username, nome ou email... / Search username, name or email..."
               className="w-full rounded-xl border border-neutral-300 bg-white py-3 pl-11 pr-4 text-sm text-neutral-800 outline-none transition focus:border-blue-600 focus:ring-2 focus:ring-blue-600/10"
             />
           </div>
@@ -379,19 +362,20 @@ export default function UsuariosAdmin() {
           <div className="flex items-center justify-between border-b border-neutral-400/20 p-5">
             <div>
               <h2 className="text-sm font-bold text-blue-900">
-                Usuários
+                Usuários / Users
               </h2>
 
               <p className="mt-0.5 text-xs text-neutral-600">
-                Usuários registados no sistema.
+                Usuários registados no sistema. / Users registered in the
+                system.
               </p>
             </div>
 
             <span className="rounded-full bg-blue-800/10 px-3 py-1 text-xs font-bold text-blue-800">
               {filteredUsers.length}{" "}
               {filteredUsers.length === 1
-                ? "usuário"
-                : "usuários"}
+                ? "usuário / user"
+                : "usuários / users"}
             </span>
           </div>
 
@@ -404,13 +388,13 @@ export default function UsuariosAdmin() {
               <i className="fas fa-users text-3xl text-neutral-300" />
 
               <p className="mt-3 text-sm font-medium text-neutral-500">
-                Nenhum usuário encontrado.
+                Nenhum usuário encontrado. / No users found.
               </p>
 
               {search && (
                 <p className="mt-1 text-xs text-neutral-400">
-                  Tente pesquisar por outro nome,
-                  username ou email.
+                  Tente pesquisar por outro nome, username ou email. / Try
+                  searching for another name, username or email.
                 </p>
               )}
             </div>
@@ -424,7 +408,7 @@ export default function UsuariosAdmin() {
                     </th>
 
                     <th className="px-5 py-4 text-xs font-bold uppercase tracking-wider text-neutral-500">
-                      Nome
+                      Nome / Name
                     </th>
 
                     <th className="px-5 py-4 text-xs font-bold uppercase tracking-wider text-neutral-500">
@@ -432,24 +416,20 @@ export default function UsuariosAdmin() {
                     </th>
 
                     <th className="px-5 py-4 text-right text-xs font-bold uppercase tracking-wider text-neutral-500">
-                      Ações
+                      Ações / Actions
                     </th>
                   </tr>
                 </thead>
 
                 <tbody className="divide-y divide-neutral-200">
                   {filteredUsers.map((user) => (
-                    <tr
-                      key={user.id}
-                      className="transition hover:bg-white"
-                    >
+                    <tr key={user.id} className="transition hover:bg-white">
                       <td className="px-5 py-4 text-sm font-semibold text-neutral-800">
                         {user.username}
                       </td>
 
                       <td className="px-5 py-4 text-sm text-neutral-600">
-                        {user.first_name}{" "}
-                        {user.last_name}
+                        {user.first_name} {user.last_name}
                       </td>
 
                       <td className="px-5 py-4 text-sm text-neutral-600">
@@ -458,19 +438,16 @@ export default function UsuariosAdmin() {
 
                       <td className="px-5 py-4">
                         <div className="flex justify-end">
-                          {!user.is_admin &&
-                            !user.is_superuser && (
-                              <button
-                                type="button"
-                                onClick={() =>
-                                  handleOpenReset(user)
-                                }
-                                title="Resetar senha"
-                                className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-lg border border-blue-100 bg-blue-50 text-blue-700 transition hover:bg-blue-100"
-                              >
-                                <i className="fas fa-key text-xs" />
-                              </button>
-                            )}
+                          {!user.is_admin && !user.is_superuser && (
+                            <button
+                              type="button"
+                              onClick={() => handleOpenReset(user)}
+                              title="Resetar senha / Reset password"
+                              className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-lg border border-blue-100 bg-blue-50 text-blue-700 transition hover:bg-blue-100"
+                            >
+                              <i className="fas fa-key text-xs" />
+                            </button>
+                          )}
                         </div>
                       </td>
                     </tr>
@@ -488,21 +465,18 @@ export default function UsuariosAdmin() {
         <Modal
           isOpen={isModalOpen}
           onClose={handleCloseCreate}
-          title="Novo Usuário"
+          title="Novo Usuário / New User"
           icon="fas fa-user-plus"
         >
-          <form
-            onSubmit={handleSubmit(handleCreateUser)}
-            className="space-y-6"
-          >
+          <form onSubmit={handleSubmit(handleCreateUser)} className="space-y-6">
             <div>
               <h3 className="text-lg font-bold text-slate-900">
-                Dados do usuário
+                Dados do usuário / User information
               </h3>
 
               <p className="mt-1 text-sm text-slate-500">
-                Preencha os dados para criar um novo
-                usuário.
+                Preencha os dados para criar um novo usuário. / Fill in the
+                information to create a new user.
               </p>
             </div>
 
@@ -518,7 +492,7 @@ export default function UsuariosAdmin() {
                 <input
                   id="username"
                   type="text"
-                  placeholder="Nome de usuário"
+                  placeholder="Nome de usuário / Username"
                   {...register("username")}
                   className={`w-full rounded-xl border bg-white px-4 py-3.5 text-sm text-slate-800 outline-none transition focus:ring-2 ${
                     errors.username
@@ -572,7 +546,7 @@ export default function UsuariosAdmin() {
                 <input
                   id="first_name"
                   type="text"
-                  placeholder="Primeiro nome"
+                  placeholder="Primeiro nome / First name"
                   {...register("first_name")}
                   className={`w-full rounded-xl border bg-white px-4 py-3.5 text-sm text-slate-800 outline-none transition focus:ring-2 ${
                     errors.first_name
@@ -599,7 +573,7 @@ export default function UsuariosAdmin() {
                 <input
                   id="last_name"
                   type="text"
-                  placeholder="Último nome"
+                  placeholder="Último nome / Last name"
                   {...register("last_name")}
                   className={`w-full rounded-xl border bg-white px-4 py-3.5 text-sm text-slate-800 outline-none transition focus:ring-2 ${
                     errors.last_name
@@ -626,7 +600,7 @@ export default function UsuariosAdmin() {
                 <input
                   id="password"
                   type="password"
-                  placeholder="Defina uma senha"
+                  placeholder="Defina uma senha / Set a password"
                   {...register("password")}
                   className={`w-full rounded-xl border bg-white px-4 py-3.5 text-sm text-slate-800 outline-none transition focus:ring-2 ${
                     errors.password
@@ -652,12 +626,12 @@ export default function UsuariosAdmin() {
                 {isSubmitting ? (
                   <>
                     <i className="fas fa-spinner fa-spin" />
-                    Cadastrando...
+                    Cadastrando... / Registering...
                   </>
                 ) : (
                   <>
                     <i className="fas fa-user-plus" />
-                    Cadastrar usuário
+                    Cadastrar usuário / Register user
                   </>
                 )}
               </button>
@@ -672,13 +646,11 @@ export default function UsuariosAdmin() {
         <ModalSmall
           isOpen={isResetModalOpen}
           onClose={handleCloseReset}
-          title="Resetar senha"
+          title="Resetar senha / Reset password"
           icon="fas fa-key"
         >
           <form
-            onSubmit={handleSubmitReset(
-              handleResetPassword,
-            )}
+            onSubmit={handleSubmitReset(handleResetPassword)}
             className="space-y-5"
           >
             <div className="text-center">
@@ -687,11 +659,15 @@ export default function UsuariosAdmin() {
               </div>
 
               <h3 className="mt-4 text-base font-bold text-slate-900">
-                Redefinir senha do usuário
+                Redefinir senha do usuário / Reset user password
               </h3>
 
               <p className="mt-2 text-sm leading-6 text-slate-500">
                 Defina uma nova senha para{" "}
+                <strong className="font-semibold text-slate-700">
+                  {selectedUser?.username}
+                </strong>
+                . / Set a new password for{" "}
                 <strong className="font-semibold text-slate-700">
                   {selectedUser?.username}
                 </strong>
@@ -704,13 +680,13 @@ export default function UsuariosAdmin() {
                 htmlFor="reset-password"
                 className="mb-2 block text-sm font-semibold text-slate-700"
               >
-                Nova senha
+                Nova senha / New password
               </label>
 
               <input
                 id="reset-password"
                 type="password"
-                placeholder="Digite a nova senha"
+                placeholder="Digite a nova senha / Enter the new password"
                 {...registerReset("password")}
                 className={`w-full rounded-xl border bg-white px-4 py-3 text-sm text-slate-800 outline-none transition focus:ring-2 ${
                   resetErrors.password
@@ -731,13 +707,13 @@ export default function UsuariosAdmin() {
                 htmlFor="confirm-password"
                 className="mb-2 block text-sm font-semibold text-slate-700"
               >
-                Confirmar senha
+                Confirmar senha / Confirm password
               </label>
 
               <input
                 id="confirm-password"
                 type="password"
-                placeholder="Digite novamente a senha"
+                placeholder="Digite novamente a senha / Enter the password again"
                 {...registerReset("confirmPassword")}
                 className={`w-full rounded-xl border bg-white px-4 py-3 text-sm text-slate-800 outline-none transition focus:ring-2 ${
                   resetErrors.confirmPassword
@@ -760,7 +736,7 @@ export default function UsuariosAdmin() {
                 onClick={handleCloseReset}
                 className="cursor-pointer rounded-xl border border-slate-200 bg-white px-5 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60"
               >
-                Cancelar
+                Cancelar / Cancel
               </button>
 
               <button
@@ -771,12 +747,12 @@ export default function UsuariosAdmin() {
                 {isResetting ? (
                   <>
                     <i className="fas fa-spinner fa-spin mr-2" />
-                    Redefinindo...
+                    Redefinindo... / Resetting...
                   </>
                 ) : (
                   <>
                     <i className="fas fa-key mr-2" />
-                    Redefinir senha
+                    Redefinir senha / Reset password
                   </>
                 )}
               </button>

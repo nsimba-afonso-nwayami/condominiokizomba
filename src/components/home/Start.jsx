@@ -23,33 +23,36 @@ export default function Start() {
           {/* IDENTIFICAÇÃO */}
           <div className="mb-7">
             <p className="text-sm font-semibold tracking-wide text-white">
-              Sistema de Gestão de Acesso
+              Sistema de Gestão de Eventos
             </p>
 
             <p className="mt-1 text-xs text-slate-400">
-              QR Code Access Management System
+              Event Management System
             </p>
           </div>
 
           {/* TÍTULO */}
           <h1 className="text-4xl font-bold leading-tight tracking-tight text-white sm:text-5xl lg:text-6xl">
-            Gere QR Codes para
-            <span className="block text-blue-500">acessos ao condomínio.</span>
+            Crie e organize eventos
+            <span className="block text-blue-500">
+              com QR Codes.
+            </span>
           </h1>
 
           <p className="mt-2 text-lg font-medium text-slate-300 sm:text-xl">
-            Generate QR Codes for condominium access.
+            Create and manage events with QR Codes.
           </p>
 
           {/* DESCRIÇÃO */}
           <p className="mt-6 max-w-2xl text-sm leading-7 text-slate-300 sm:text-base">
-            Crie códigos QR de acesso para moradores e convidados de forma
-            simples, rápida e organizada.
+            Registe eventos, organize as informações dos participantes e
+            gere QR Codes para facilitar a identificação e consulta dos
+            dados do evento.
           </p>
 
           <p className="mt-2 max-w-2xl text-sm leading-7 text-slate-400 sm:text-base">
-            Create access QR Codes for residents and guests quickly and
-            efficiently.
+            Register events, organize participant information and generate
+            QR Codes to simplify event identification and information access.
           </p>
 
           {/* CTA */}
@@ -58,18 +61,18 @@ export default function Start() {
               to="/login"
               className="inline-flex cursor-pointer items-center rounded-xl bg-red-600 px-7 py-3.5 text-sm font-semibold text-white transition-all duration-300 hover:-translate-y-0.5 hover:bg-red-500 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 focus:ring-offset-slate-950"
             >
-              <span>Gerar QR Code / Generate QR Code</span>
+              <span>Criar evento / Create Event</span>
             </Link>
           </div>
 
           {/* RODAPÉ DA ÁREA */}
           <div className="mt-12 border-t border-white/10 pt-5">
             <p className="text-xs text-slate-500">
-              Acesso seguro e organizado para moradores e convidados.
+              Gestão simples, organizada e segura dos seus eventos.
             </p>
 
             <p className="mt-1 text-xs text-slate-600">
-              Secure and organized access for residents and guests.
+              Simple, organized and secure event management.
             </p>
           </div>
         </div>

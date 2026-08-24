@@ -51,7 +51,7 @@ export default function EventosAdmin() {
   });
 
   // =========================================================
-  // BUSCAR EVENTOS
+  // BUSCAR EVENTOS / FETCH EVENTS
   // =========================================================
 
   useEffect(() => {
@@ -80,26 +80,24 @@ export default function EventosAdmin() {
       console.error("ERRO AO BUSCAR EVENTOS:", error);
       console.error("RESPOSTA DA API:", error.response?.data);
 
-      toast.error("Não foi possível carregar os eventos.");
+      toast.error(
+        "Não foi possível carregar os eventos. / Unable to load events.",
+      );
     } finally {
       setIsLoading(false);
     }
   };
 
   // =========================================================
-  // ÚLTIMOS 10 REGISTROS
+  // ÚLTIMOS 10 REGISTROS / LATEST 10 RECORDS
   // =========================================================
 
   const latestEvents = useMemo(() => {
     return [...events]
       .sort((a, b) => {
-        const dateA = new Date(
-          `${a.data}T${a.hora || "00:00:00"}`,
-        );
+        const dateA = new Date(`${a.data}T${a.hora || "00:00:00"}`);
 
-        const dateB = new Date(
-          `${b.data}T${b.hora || "00:00:00"}`,
-        );
+        const dateB = new Date(`${b.data}T${b.hora || "00:00:00"}`);
 
         return dateB - dateA;
       })
@@ -107,7 +105,7 @@ export default function EventosAdmin() {
   }, [events]);
 
   // =========================================================
-  // PESQUISA + FILTROS
+  // PESQUISA + FILTROS / SEARCH + FILTERS
   // =========================================================
 
   const filteredEvents = useMemo(() => {
@@ -141,7 +139,7 @@ export default function EventosAdmin() {
   }, [latestEvents, search, dateFilter]);
 
   // =========================================================
-  // ABRIR MODAL DO QR CODE
+  // ABRIR MODAL DO QR CODE / OPEN QR CODE MODAL
   // =========================================================
 
   const handleOpenQRCode = (event) => {
@@ -150,7 +148,7 @@ export default function EventosAdmin() {
   };
 
   // =========================================================
-  // ABRIR MODAL PARA CRIAR
+  // ABRIR MODAL PARA CRIAR / OPEN CREATE MODAL
   // =========================================================
 
   const handleOpenCreate = () => {
@@ -170,11 +168,13 @@ export default function EventosAdmin() {
   };
 
   // =========================================================
-  // CRIAR EVENTO
+  // CRIAR EVENTO / CREATE EVENT
   // =========================================================
 
   const handleSubmitEvent = async (data) => {
-    const loadingToast = toast.loading("Cadastrando evento...");
+    const loadingToast = toast.loading(
+      "Cadastrando evento... / Registering event...",
+    );
 
     try {
       const payload = {
@@ -208,21 +208,23 @@ export default function EventosAdmin() {
 
       toast.dismiss(loadingToast);
 
-      toast.success("Evento cadastrado com sucesso!", {
-        duration: 5000,
-      });
+      toast.success(
+        "Evento cadastrado com sucesso! / Event registered successfully!",
+        {
+          duration: 5000,
+        },
+      );
     } catch (error) {
-      /*console.error("ERRO AO CADASTRAR EVENTO:", error);
-      console.error("RESPOSTA DA API:", error.response?.data);*/
-
       toast.dismiss(loadingToast);
 
-      toast.error("Não foi possível cadastrar o evento.");
+      toast.error(
+        "Não foi possível cadastrar o evento. / Unable to register the event.",
+      );
     }
   };
 
   // =========================================================
-  // ABRIR CONFIRMAÇÃO DE EXCLUSÃO
+  // ABRIR CONFIRMAÇÃO DE EXCLUSÃO / OPEN DELETE CONFIRMATION
   // =========================================================
 
   const handleOpenDelete = (event) => {
@@ -231,38 +233,40 @@ export default function EventosAdmin() {
   };
 
   // =========================================================
-  // EXCLUIR
+  // EXCLUIR / DELETE
   // =========================================================
 
   const handleDelete = async () => {
     if (!selectedEvent) return;
 
-    const loadingToast = toast.loading("Excluindo evento...");
+    const loadingToast = toast.loading(
+      "Excluindo evento... / Deleting event...",
+    );
 
     try {
       setIsDeleting(true);
 
       await deleteEvent(selectedEvent.id);
 
-      setEvents((prev) =>
-        prev.filter((item) => item.id !== selectedEvent.id),
-      );
+      setEvents((prev) => prev.filter((item) => item.id !== selectedEvent.id));
 
       setSelectedEvent(null);
       setIsDeleteModalOpen(false);
 
       toast.dismiss(loadingToast);
 
-      toast.success("Evento eliminado com sucesso!", {
-        duration: 5000,
-      });
+      toast.success(
+        "Evento eliminado com sucesso! / Event deleted successfully!",
+        {
+          duration: 5000,
+        },
+      );
     } catch (error) {
-      /*console.error("ERRO AO ELIMINAR EVENTO:", error);
-      console.error("RESPOSTA DA API:", error.response?.data);*/
-
       toast.dismiss(loadingToast);
 
-      toast.error("Não foi possível eliminar o evento.");
+      toast.error(
+        "Não foi possível eliminar o evento. / Unable to delete the event.",
+      );
     } finally {
       setIsDeleting(false);
     }
@@ -270,18 +274,22 @@ export default function EventosAdmin() {
 
   return (
     <>
-      <title>Eventos | Admin | Sistema de Gestão de Acesso</title>
+      <title>
+        Eventos / Events | Admin | Sistema de Gestão de Acesso / Access
+        Management System
+      </title>
 
-      <AdminLayout title="Eventos">
+      <AdminLayout title="Eventos / Events">
         {/* HEADER */}
         <section className="flex flex-col justify-between gap-4 border-b border-neutral-400/30 pb-4 sm:flex-row sm:items-center">
           <div>
             <h1 className="text-xl font-bold tracking-tight text-blue-900 sm:text-2xl">
-              Gestão de Eventos
+              Gestão de Eventos / Event Management
             </h1>
 
             <p className="mt-0.5 text-xs text-neutral-600 sm:text-sm">
-              Consulte, cadastre e gerencie os eventos do condomínio.
+              Consulte, cadastre e gerencie os eventos do condomínio. / View,
+              register and manage condominium events.
             </p>
           </div>
 
@@ -291,17 +299,17 @@ export default function EventosAdmin() {
             className="inline-flex w-fit cursor-pointer items-center gap-2 rounded-xl bg-blue-800 px-4 py-2 text-xs font-semibold text-white shadow-sm transition-colors duration-200 hover:bg-blue-900"
           >
             <i className="fas fa-plus text-xs" />
-            Novo Evento
+            Novo Evento / New Event
           </button>
         </section>
 
-        {/* PESQUISA + FILTROS */}
+        {/* PESQUISA + FILTROS / SEARCH + FILTERS */}
         <section className="rounded-2xl border border-neutral-400/40 bg-neutral-50 p-5 shadow-sm">
           <div className="mb-4 flex items-center gap-2">
             <i className="fas fa-magnifying-glass text-sm text-blue-800" />
 
             <h2 className="text-sm font-bold text-blue-900">
-              Pesquisar eventos
+              Pesquisar eventos / Search events
             </h2>
           </div>
 
@@ -313,7 +321,7 @@ export default function EventosAdmin() {
                 type="search"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                placeholder="Pesquisar morador, local ou convidado..."
+                placeholder="Pesquisar morador, local ou convidado... / Search resident, location or guest..."
                 className="w-full rounded-xl border border-neutral-300 bg-white py-3 pl-11 pr-4 text-sm text-neutral-800 outline-none transition focus:border-blue-600 focus:ring-2 focus:ring-blue-600/10"
               />
             </div>
@@ -323,31 +331,31 @@ export default function EventosAdmin() {
               onChange={(e) => setDateFilter(e.target.value)}
               className="w-full cursor-pointer rounded-xl border border-neutral-300 bg-white px-4 py-3 text-sm text-neutral-700 outline-none transition focus:border-blue-600 focus:ring-2 focus:ring-blue-600/10"
             >
-              <option value="all">Todos</option>
-              <option value="today">Hoje</option>
-              <option value="previous">Anteriores</option>
+              <option value="all">Todos / All</option>
+              <option value="today">Hoje / Today</option>
+              <option value="previous">Anteriores / Previous</option>
             </select>
           </div>
         </section>
 
-        {/* LISTAGEM */}
+        {/* LISTAGEM / LIST */}
         <section className="overflow-hidden rounded-2xl border border-neutral-400/40 bg-neutral-50 shadow-sm">
           <div className="flex items-center justify-between border-b border-neutral-400/20 p-5">
             <div>
               <h2 className="text-sm font-bold text-blue-900">
-                Eventos
+                Eventos / Events
               </h2>
 
               <p className="mt-0.5 text-xs text-neutral-600">
-                Últimos 10 registros realizados.
+                Últimos 10 registros realizados. / Latest 10 records.
               </p>
             </div>
 
             <span className="rounded-full bg-blue-800/10 px-3 py-1 text-xs font-bold text-blue-800">
               {filteredEvents.length}{" "}
               {filteredEvents.length === 1
-                ? "registo"
-                : "registos"}
+                ? "registo / record"
+                : "registos / records"}
             </span>
           </div>
 
@@ -360,7 +368,7 @@ export default function EventosAdmin() {
               <i className="fas fa-calendar-xmark text-3xl text-neutral-300" />
 
               <p className="mt-3 text-sm font-medium text-neutral-500">
-                Nenhum evento encontrado.
+                Nenhum evento encontrado. / No events found.
               </p>
             </div>
           ) : (
@@ -369,27 +377,27 @@ export default function EventosAdmin() {
                 <thead className="border-b border-neutral-200 bg-neutral-100/70">
                   <tr>
                     <th className="px-5 py-4 text-xs font-bold uppercase tracking-wider text-neutral-500">
-                      Morador
+                      Morador / Resident
                     </th>
 
                     <th className="px-5 py-4 text-xs font-bold uppercase tracking-wider text-neutral-500">
-                      Evento
+                      Evento / Event
                     </th>
 
                     <th className="px-5 py-4 text-xs font-bold uppercase tracking-wider text-neutral-500">
-                      Data
+                      Data / Date
                     </th>
 
                     <th className="px-5 py-4 text-xs font-bold uppercase tracking-wider text-neutral-500">
-                      Horário
+                      Horário / Time
                     </th>
 
                     <th className="px-5 py-4 text-xs font-bold uppercase tracking-wider text-neutral-500">
-                      Local
+                      Local / Location
                     </th>
 
                     <th className="px-5 py-4 text-xs font-bold uppercase tracking-wider text-neutral-500">
-                      Convidados
+                      Convidados / Guests
                     </th>
 
                     <th className="px-5 py-4 text-xs font-bold uppercase tracking-wider text-neutral-500">
@@ -397,17 +405,14 @@ export default function EventosAdmin() {
                     </th>
 
                     <th className="px-5 py-4 text-right text-xs font-bold uppercase tracking-wider text-neutral-500">
-                      Ações
+                      Ações / Actions
                     </th>
                   </tr>
                 </thead>
 
                 <tbody className="divide-y divide-neutral-200">
                   {filteredEvents.map((item) => (
-                    <tr
-                      key={item.id}
-                      className="transition hover:bg-white"
-                    >
+                    <tr key={item.id} className="transition hover:bg-white">
                       <td className="px-5 py-4 text-sm font-semibold text-neutral-800">
                         {item.morador}
                       </td>
@@ -434,12 +439,12 @@ export default function EventosAdmin() {
                         {item.convidados}
                       </td>
 
-                      {/* QR CODE CLICÁVEL */}
+                      {/* QR CODE CLICÁVEL / CLICKABLE QR CODE */}
                       <td className="px-5 py-4">
                         <button
                           type="button"
                           onClick={() => handleOpenQRCode(item)}
-                          title="Ver QR Code"
+                          title="Ver QR Code / View QR Code"
                           className="cursor-pointer rounded-xl border border-transparent bg-white p-2 transition hover:border-blue-200 hover:bg-blue-50"
                         >
                           <div className="w-fit rounded-xl border border-neutral-200 bg-white p-2">
@@ -448,13 +453,13 @@ export default function EventosAdmin() {
                         </button>
                       </td>
 
-                      {/* AÇÕES */}
+                      {/* AÇÕES / ACTIONS */}
                       <td className="px-5 py-4">
                         <div className="flex justify-end gap-2">
                           <button
                             type="button"
                             onClick={() => handleOpenDelete(item)}
-                            title="Eliminar evento"
+                            title="Eliminar evento / Delete event"
                             className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-lg border border-red-100 bg-red-50 text-red-600 transition hover:bg-red-100"
                           >
                             <i className="fas fa-trash text-xs" />
@@ -470,7 +475,7 @@ export default function EventosAdmin() {
         </section>
 
         {/* =====================================================
-            MODAL CRIAR EVENTO
+            MODAL CRIAR EVENTO / CREATE EVENT MODAL
         ====================================================== */}
 
         <Modal
@@ -482,7 +487,7 @@ export default function EventosAdmin() {
               reset();
             }
           }}
-          title="Novo Evento"
+          title="Novo Evento / New Event"
           icon="fas fa-calendar-plus"
         >
           <form
@@ -491,11 +496,11 @@ export default function EventosAdmin() {
           >
             <div>
               <h3 className="text-lg font-bold text-slate-900">
-                Dados do evento
+                Dados do evento / Event details
               </h3>
 
               <p className="mt-1 text-sm text-slate-500">
-                Preencha os campos abaixo.
+                Preencha os campos abaixo. / Fill in the fields below.
               </p>
             </div>
 
@@ -512,7 +517,7 @@ export default function EventosAdmin() {
                 <input
                   id="morador"
                   type="text"
-                  placeholder="Nome do morador"
+                  placeholder="Nome do morador / Resident name"
                   {...register("morador")}
                   className={`w-full rounded-xl border bg-white px-4 py-3.5 text-sm text-slate-800 outline-none transition focus:ring-2 ${
                     errors.morador
@@ -550,9 +555,7 @@ export default function EventosAdmin() {
                     Aniversário / Birthday
                   </option>
 
-                  <option value="Reunião/Meeting">
-                    Reunião / Meeting
-                  </option>
+                  <option value="Reunião/Meeting">Reunião / Meeting</option>
 
                   <option value="Palestras/Lectures">
                     Palestras / Lectures
@@ -562,9 +565,7 @@ export default function EventosAdmin() {
                     Aulas para criança / Classes for children
                   </option>
 
-                  <option value="Jogos/Games">
-                    Jogos / Games
-                  </option>
+                  <option value="Jogos/Games">Jogos / Games</option>
                 </select>
 
                 {errors.tipoEvento && (
@@ -657,25 +658,19 @@ export default function EventosAdmin() {
                   {...register("local")}
                   className="w-full cursor-pointer rounded-xl border border-slate-200 bg-white px-4 py-3.5 text-sm text-slate-700 outline-none transition focus:border-blue-600 focus:ring-2 focus:ring-blue-600/10"
                 >
-                  <option value="">
-                    Selecione o local / Select location
-                  </option>
+                  <option value="">Selecione o local / Select location</option>
 
                   <option value="Rés do chão">
                     Rés do chão / Ground floor
                   </option>
 
-                  <option value="Piso 01/ Floor 01">
-                    Piso 01 / Floor 01
-                  </option>
+                  <option value="Piso 01/ Floor 01">Piso 01 / Floor 01</option>
 
                   <option value="Residência/ Residencial">
                     Residência / Residential
                   </option>
 
-                  <option value="Ginásio/ Gym">
-                    Ginásio / Gym
-                  </option>
+                  <option value="Ginásio/ Gym">Ginásio / Gym</option>
 
                   <option value="Campo Padel/ Padel court">
                     Campo Padel / Padel court
@@ -703,13 +698,13 @@ export default function EventosAdmin() {
                   htmlFor="convidados"
                   className="mb-2 block text-sm font-semibold text-slate-700"
                 >
-                  Convidados / Guest
+                  Convidados / Guests
                 </label>
 
                 <textarea
                   id="convidados"
                   {...register("convidados")}
-                  placeholder="Escreva o nome dos convidados..."
+                  placeholder="Escreva o nome dos convidados... / Enter the guests' names..."
                   rows="4"
                   className="w-full resize-none rounded-xl border border-slate-200 bg-white px-4 py-3.5 text-sm text-slate-800 outline-none transition placeholder:text-slate-400 focus:border-blue-600 focus:ring-2 focus:ring-blue-600/10"
                 />
@@ -732,12 +727,12 @@ export default function EventosAdmin() {
                 {isSubmitting ? (
                   <>
                     <i className="fas fa-spinner fa-spin" />
-                    Cadastrando...
+                    Cadastrando... / Registering...
                   </>
                 ) : (
                   <>
                     <i className="fas fa-plus" />
-                    Cadastrar evento
+                    Cadastrar evento / Register event
                   </>
                 )}
               </button>
@@ -746,7 +741,7 @@ export default function EventosAdmin() {
         </Modal>
 
         {/* =====================================================
-            MODAL QR CODE
+            MODAL QR CODE / QR CODE MODAL
         ====================================================== */}
 
         <Modal
@@ -755,7 +750,7 @@ export default function EventosAdmin() {
             setIsQRCodeModalOpen(false);
             setSelectedEvent(null);
           }}
-          title="QR Code do Evento"
+          title="QR Code do Evento / Event QR Code"
           icon="fas fa-qrcode"
         >
           {selectedEvent && (
@@ -786,7 +781,7 @@ export default function EventosAdmin() {
                   className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-xl border border-slate-200 bg-slate-50 px-4 py-3.5 text-sm font-semibold text-slate-700 transition hover:border-blue-200 hover:bg-blue-50 hover:text-blue-700"
                 >
                   <i className="fa-solid fa-file-pdf" />
-                  Baixar PDF
+                  Baixar PDF / Download PDF
                 </button>
               </div>
             </div>
@@ -794,7 +789,7 @@ export default function EventosAdmin() {
         </Modal>
 
         {/* =====================================================
-            MODAL CONFIRMAR EXCLUSÃO
+            MODAL CONFIRMAR EXCLUSÃO / DELETE CONFIRMATION MODAL
         ====================================================== */}
 
         <ModalSmall
@@ -805,7 +800,7 @@ export default function EventosAdmin() {
               setSelectedEvent(null);
             }
           }}
-          title="Eliminar evento"
+          title="Eliminar evento / Delete event"
           icon="fas fa-trash"
         >
           <div className="text-center">
@@ -814,7 +809,8 @@ export default function EventosAdmin() {
             </div>
 
             <h3 className="mt-4 text-base font-bold text-slate-900">
-              Tem certeza que deseja eliminar?
+              Tem certeza que deseja eliminar? / Are you sure you want to
+              delete?
             </h3>
 
             <p className="mx-auto mt-2 max-w-sm text-sm leading-6 text-slate-500">
@@ -822,7 +818,8 @@ export default function EventosAdmin() {
               <strong className="font-semibold text-slate-700">
                 {selectedEvent?.morador}
               </strong>{" "}
-              será eliminado permanentemente.
+              será eliminado permanentemente. / This event will be permanently
+              deleted.
             </p>
 
             <div className="mt-6 flex flex-col-reverse gap-3 sm:flex-row sm:justify-center">
@@ -835,7 +832,7 @@ export default function EventosAdmin() {
                 }}
                 className="cursor-pointer rounded-xl border border-slate-200 bg-white px-5 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60"
               >
-                Cancelar
+                Cancelar / Cancel
               </button>
 
               <button
@@ -847,12 +844,12 @@ export default function EventosAdmin() {
                 {isDeleting ? (
                   <>
                     <i className="fas fa-spinner fa-spin mr-2" />
-                    Eliminando...
+                    Eliminando... / Deleting...
                   </>
                 ) : (
                   <>
                     <i className="fas fa-trash mr-2" />
-                    Eliminar evento
+                    Eliminar evento / Delete event
                   </>
                 )}
               </button>

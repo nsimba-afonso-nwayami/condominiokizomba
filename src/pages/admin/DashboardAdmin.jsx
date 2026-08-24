@@ -39,7 +39,9 @@ export default function DashboardAdmin() {
         setEvents(normalizedEvents);
         setUsers(usersData);
       } catch (error) {
-        toast.error("Não foi possível carregar os dados do dashboard.");
+        toast.error(
+          "Não foi possível carregar os dados do dashboard. / Unable to load dashboard data.",
+        );
       } finally {
         setIsLoading(false);
       }
@@ -50,44 +52,45 @@ export default function DashboardAdmin() {
 
   const today = getToday();
 
-  // Apenas eventos de hoje
+  // Apenas eventos de hoje / Only today's events
   const qrcodesHoje = events.filter((item) => item.data === today);
 
   const stats = [
     {
-      title: "Total de Eventos",
+      title: "Total de Eventos / Total Events",
       value: events.length,
-      description: "Eventos registados",
+      description: "Eventos registados / Registered events",
       icon: "fa-calendar-days",
     },
     {
-      title: "Eventos Hoje",
+      title: "Eventos Hoje / Events Today",
       value: qrcodesHoje.length,
-      description: "Agendados para hoje",
+      description: "Agendados para hoje / Scheduled for today",
       icon: "fa-calendar-check",
     },
     {
-      title: "Utilizadores",
+      title: "Utilizadores / Users",
       value: users.length,
-      description: "Utilizadores cadastrados",
+      description: "Utilizadores cadastrados / Registered users",
       icon: "fa-users",
     },
   ];
 
   return (
     <>
-      <title>Início | Admin | Sistema de Gestão de Acesso</title>
+      <title>Início | Admin | Gestão de Eventos</title>
 
-      <AdminLayout title="Início">
+      <AdminLayout title="Início / Home">
         {/* WELCOME HEADER */}
         <section className="flex flex-col justify-between gap-4 border-b border-neutral-400/30 pb-2 sm:flex-row sm:items-center">
           <div>
             <h1 className="text-xl font-bold tracking-tight text-blue-900 sm:text-2xl">
-              Seja Bem-vindo
+              Seja Bem-vindo / Welcome
             </h1>
 
             <p className="mt-0.5 text-xs text-neutral-600 sm:text-sm">
-              Resumo da atividade recente no Condomínio Kizomba.
+              Resumo da atividade recente no Condomínio Kizomba. / Summary of
+              recent activity at Condomínio Kizomba.
             </p>
           </div>
 
@@ -103,7 +106,7 @@ export default function DashboardAdmin() {
             "
           >
             <i className="fas fa-plus text-xs" />
-            Novo Evento
+            Novo Evento / New Event
           </Link>
         </section>
 
@@ -150,11 +153,11 @@ export default function DashboardAdmin() {
           <div className="mb-4 flex items-center justify-between">
             <div>
               <h2 className="text-sm font-bold text-blue-900">
-                QR Codes gerados hoje
+                QR Codes gerados hoje / QR Codes generated today
               </h2>
 
               <p className="mt-0.5 text-xs text-neutral-600">
-                Acessos programados para hoje.
+                Eventos programados para hoje. / Events scheduled for today.
               </p>
             </div>
 
@@ -162,7 +165,9 @@ export default function DashboardAdmin() {
               {isLoading
                 ? "..."
                 : `${qrcodesHoje.length} ${
-                    qrcodesHoje.length === 1 ? "registo" : "registos"
+                    qrcodesHoje.length === 1
+                      ? "registo / record"
+                      : "registos / records"
                   }`}
             </span>
           </div>
@@ -171,7 +176,7 @@ export default function DashboardAdmin() {
             <div className="flex min-h-40 items-center justify-center">
               <div className="flex items-center gap-2 text-sm text-neutral-500">
                 <i className="fas fa-spinner fa-spin text-blue-800" />
-                Carregando eventos...
+                Carregando eventos... / Loading events...
               </div>
             </div>
           ) : qrcodesHoje.length === 0 ? (
@@ -181,11 +186,12 @@ export default function DashboardAdmin() {
               </div>
 
               <h4 className="mt-4 font-bold text-blue-900">
-                Nenhum QR Code gerado hoje
+                Nenhum QR Code gerado hoje / No QR Code generated today
               </h4>
 
               <p className="mx-auto mt-2 max-w-md text-sm text-neutral-600">
-                Ainda não existe nenhum QR Code registado para hoje.
+                Ainda não existe nenhum evento registado para hoje. / There are
+                no events registered for today yet.
               </p>
             </div>
           ) : (
@@ -225,7 +231,8 @@ export default function DashboardAdmin() {
               </div>
 
               <p className="mt-5 text-center text-sm text-slate-500">
-                Apresente este QR Code para leitura na entrada do condomínio.
+                Apresente este QR Code para leitura na entrada do condomínio. /
+                Present this QR Code for scanning at the condominium entrance.
               </p>
 
               <div className="mt-6 flex flex-col gap-3 sm:flex-row">
@@ -242,7 +249,7 @@ export default function DashboardAdmin() {
                   "
                 >
                   <i className="fa-solid fa-file-pdf" />
-                  Baixar PDF
+                  Baixar PDF / Download PDF
                 </button>
 
                 <button
@@ -256,7 +263,7 @@ export default function DashboardAdmin() {
                   "
                 >
                   <i className="fa-solid fa-check" />
-                  Fechar
+                  Fechar / Close
                 </button>
               </div>
             </div>
@@ -276,9 +283,7 @@ function QRCodeCard({ item, onQRCodeClick }) {
             {item.tipoEvento}
           </span>
 
-          <h4 className="mt-3 font-bold text-slate-900">
-            {item.morador}
-          </h4>
+          <h4 className="mt-3 font-bold text-slate-900">{item.morador}</h4>
 
           <p className="mt-1 text-xs text-slate-500">
             <i className="fa-solid fa-location-dot mr-1 text-blue-700" />
@@ -300,19 +305,19 @@ function QRCodeCard({ item, onQRCodeClick }) {
       <div className="mt-5 grid grid-cols-2 gap-3 border-t border-slate-100 pt-4">
         <InfoItem
           icon="fa-solid fa-calendar"
-          label="Data"
+          label="Data / Date"
           value={formatDate(item.data)}
         />
 
         <InfoItem
           icon="fa-solid fa-clock"
-          label="Horário"
+          label="Horário / Time"
           value={`${item.hora} - ${item.horaFim}`}
         />
 
         <InfoItem
           icon="fa-solid fa-users"
-          label="Convidados"
+          label="Convidados / Guests"
           value={item.convidados}
         />
       </div>
@@ -324,7 +329,7 @@ function QRCodeCard({ item, onQRCodeClick }) {
           className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-semibold text-slate-700 transition hover:border-blue-200 hover:bg-blue-50 hover:text-blue-700"
         >
           <i className="fa-solid fa-file-pdf" />
-          Baixar PDF
+          Baixar PDF / Download PDF
         </button>
       </div>
     </div>

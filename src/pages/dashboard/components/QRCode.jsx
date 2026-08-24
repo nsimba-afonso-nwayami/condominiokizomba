@@ -23,7 +23,7 @@ export default function QRCode({ item, size = 80 }) {
   // PORTUGUÊS + INGLÊS
 
   const qrValue = `
-    Sistema de Gestão de Acesso / Access Management System
+    Gestão de Eventos / Event Management
 
     Evento #${item.id} / Event #${item.id}
 

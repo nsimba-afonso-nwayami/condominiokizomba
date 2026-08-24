@@ -32,10 +32,10 @@ export default function HeaderAdmin({ sidebarOpen, setSidebarOpen, title }) {
 
   // TIPO DE CONTA
   const userRole = user?.is_superuser
-    ? "Super Administrador"
+    ? "Super Administrador / Super Admin"
     : user?.is_admin
-      ? "Administrador"
-      : "Usuário";
+      ? "Administrador / Admin"
+      : "Usuário / User";
 
   return (
     <header
@@ -51,9 +51,9 @@ export default function HeaderAdmin({ sidebarOpen, setSidebarOpen, title }) {
         md:left-64
       "
     >
-      {/* LEFT */}
+      {/* ESQUERDA */}
       <div className="flex items-center gap-4">
-        {/* MOBILE MENU */}
+        {/* MENU MOBILE */}
         <button
           type="button"
           className="
@@ -64,7 +64,8 @@ export default function HeaderAdmin({ sidebarOpen, setSidebarOpen, title }) {
             md:hidden
           "
           onClick={() => setSidebarOpen(!sidebarOpen)}
-          aria-label="Abrir menu"
+          aria-label="Abrir menu / Open menu"
+          title="Abrir menu / Open menu"
         >
           <i className="fas fa-bars-staggered" />
         </button>
@@ -79,14 +80,14 @@ export default function HeaderAdmin({ sidebarOpen, setSidebarOpen, title }) {
           </h2>
 
           <p className="hidden text-[10px] font-semibold uppercase tracking-wider text-sky-400/80 md:block">
-            Sistema de Gestão de Acesso
+            Gestão de Eventos / Event Management
           </p>
         </div>
       </div>
 
-      {/* RIGHT */}
+      {/* DIREITA */}
       <div className="flex items-center gap-4">
-        {/* USER INFO */}
+        {/* INFORMAÇÕES DO UTILIZADOR */}
         <div className="flex items-center gap-3">
           <div className="hidden text-right sm:block">
             <p className="text-sm font-bold leading-tight text-slate-50">
@@ -104,7 +105,7 @@ export default function HeaderAdmin({ sidebarOpen, setSidebarOpen, title }) {
             className="
               flex h-9 w-9
               cursor-pointer items-center justify-center
-              rounded-full
+              rounded-lg
               border border-blue-800/40
               bg-slate-50
               text-blue-900
@@ -113,7 +114,8 @@ export default function HeaderAdmin({ sidebarOpen, setSidebarOpen, title }) {
               hover:bg-blue-800
               hover:text-slate-50
             "
-            aria-label="Perfil do administrador"
+            aria-label="Perfil do administrador / Administrator profile"
+            title="Perfil / Profile"
           >
             <i className="fas fa-user-shield text-sm" />
           </Link>

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import toast from "react-hot-toast";
+
 import { getEventById } from "../../services/eventService";
 import { formatDate } from "../../utils/dateUtils";
 
@@ -32,7 +33,9 @@ export default function Event() {
     return (
       <main className="flex min-h-screen items-center justify-center bg-slate-50 px-6">
         <div className="text-center">
-          <p className="text-sm font-medium text-slate-500">
+          <i className="fa-solid fa-spinner fa-spin text-2xl text-blue-700" />
+
+          <p className="mt-4 text-sm font-medium text-slate-500">
             Carregando dados do evento... / Loading event data...
           </p>
         </div>
@@ -43,12 +46,20 @@ export default function Event() {
   if (!event) {
     return (
       <main className="flex min-h-screen items-center justify-center bg-slate-50 px-6">
-        <div className="w-full max-w-md rounded-2xl border border-slate-200 bg-white p-8 text-center">
-          <h1 className="text-xl font-bold text-slate-900">
-            Evento não encontrado / Event not found
+        <div className="w-full max-w-md border border-slate-200 bg-white p-8 text-center">
+          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-lg bg-red-50 text-red-600">
+            <i className="fa-solid fa-calendar-xmark text-xl" />
+          </div>
+
+          <h1 className="mt-5 text-xl font-bold text-slate-900">
+            Evento não encontrado
           </h1>
 
-          <p className="mt-3 text-sm leading-relaxed text-slate-500">
+          <p className="mt-2 text-sm font-medium text-slate-500">
+            Event not found
+          </p>
+
+          <p className="mt-4 text-sm leading-relaxed text-slate-500">
             O evento associado a este QR Code não existe ou não está disponível.
             <br />
             The event associated with this QR Code does not exist or is
@@ -61,7 +72,7 @@ export default function Event() {
 
   return (
     <>
-      <title>Evento | Sistema de QR Code</title>
+      <title>{event.tipo_evento} | Gestão de Eventos</title>
 
       <main className="min-h-screen bg-slate-50">
         {/* HEADER */}
@@ -69,11 +80,11 @@ export default function Event() {
           <div className="mx-auto max-w-4xl px-6 py-5">
             <div>
               <h1 className="text-lg font-bold tracking-tight text-slate-900">
-                Sistema de Gestão de Acesso
+                Gestão de Eventos
               </h1>
 
               <p className="mt-0.5 text-xs text-slate-500">
-                QR Code Access Management System
+                Event Management & QR Code System
               </p>
             </div>
           </div>
@@ -84,14 +95,18 @@ export default function Event() {
           {/* INTRODUÇÃO */}
           <div className="mb-6">
             <p className="text-xs font-bold uppercase tracking-wider text-blue-700">
-              Acesso autorizado / Authorized access
+              Evento registado / Registered event
             </p>
 
-            <h2 className="mt-1 text-2xl font-bold text-slate-900">
-              Dados do evento / Event details
+            <h2 className="mt-1 text-2xl font-bold tracking-tight text-slate-900">
+              Dados do evento
             </h2>
 
-            <p className="mt-2 text-sm leading-relaxed text-slate-500">
+            <p className="mt-1 text-sm font-medium text-slate-500">
+              Event details
+            </p>
+
+            <p className="mt-3 max-w-2xl text-sm leading-relaxed text-slate-500">
               Consulte as informações associadas a este QR Code.
               <br />
               View the information associated with this QR Code.
@@ -99,45 +114,76 @@ export default function Event() {
           </div>
 
           {/* EVENTO */}
-          <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white">
-            <div className="border-b border-slate-200 px-6 py-5">
-              <span className="text-xs font-semibold text-blue-700">
-                {event.tipo_evento}
-              </span>
+          <div className="overflow-hidden border border-slate-200 bg-white">
+            {/* CABEÇALHO DO EVENTO */}
+            <div className="border-b border-slate-200 bg-blue-800 px-6 py-6 text-white">
+              <p className="text-xs font-semibold uppercase tracking-wider text-blue-100">
+                Tipo de evento / Event type
+              </p>
 
-              <h3 className="mt-2 text-xl font-bold text-slate-900">
-                {event.morador}
-              </h3>
+              <h3 className="mt-1 text-xl font-bold">{event.tipo_evento}</h3>
             </div>
 
             {/* DADOS */}
-            <div className="grid gap-x-8 gap-y-6 p-6 sm:grid-cols-2">
-              <EventInfo label="Morador / Resident" value={event.morador} />
+            <div className="grid gap-x-8 gap-y-7 p-6 sm:grid-cols-2 md:p-8">
+              <EventInfo
+                icon="fa-solid fa-user"
+                label="Morador / Resident"
+                value={event.morador}
+              />
 
               <EventInfo
+                icon="fa-solid fa-calendar-days"
                 label="Data do evento / Event date"
                 value={formatDate(event.data_evento)}
               />
 
               <EventInfo
+                icon="fa-solid fa-clock"
                 label="Horário / Time"
                 value={`${event.hora_inicio} - ${event.hora_fim}`}
               />
 
-              <EventInfo label="Local / Location" value={event.local} />
+              <EventInfo
+                icon="fa-solid fa-location-dot"
+                label="Local / Location"
+                value={event.local}
+              />
 
               <div className="sm:col-span-2">
                 <EventInfo
+                  icon="fa-solid fa-users"
                   label="Convidados / Guests"
                   value={event.convidado}
                 />
               </div>
             </div>
 
+            {/* INFORMAÇÃO */}
+            <div className="border-t border-slate-200 bg-slate-50 px-6 py-5">
+              <div className="flex items-start gap-3">
+                <i className="fa-solid fa-circle-info mt-0.5 text-blue-700" />
+
+                <div>
+                  <p className="text-xs font-semibold text-slate-600">
+                    Informação
+                  </p>
+
+                  <p className="mt-1 text-xs leading-relaxed text-slate-500">
+                    Estas informações correspondem ao evento associado ao QR
+                    Code apresentado.
+                    <br />
+                    This information corresponds to the event associated with
+                    the presented QR Code.
+                  </p>
+                </div>
+              </div>
+            </div>
+
             {/* RODAPÉ */}
             <div className="border-t border-slate-200 px-6 py-4">
               <p className="text-center text-xs text-slate-400">
-                Sistema de Gestão de Acesso / QR Code Access Management System
+                Gestão de Eventos / Event Management & QR Code System
               </p>
             </div>
           </div>
@@ -147,14 +193,15 @@ export default function Event() {
   );
 }
 
-function EventInfo({ label, value }) {
+function EventInfo({ icon, label, value }) {
   return (
     <div>
-      <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
+      <p className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-wider text-slate-400">
+        <i className={icon} />
         {label}
       </p>
 
-      <p className="mt-1 text-sm font-semibold text-slate-700">
+      <p className="mt-2 text-sm font-semibold text-slate-700">
         {value || "—"}
       </p>
     </div>
