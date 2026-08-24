@@ -3,16 +3,10 @@ import { Link } from "react-router-dom";
 
 import { getCurrentUser } from "../../../services/userService";
 
-export default function HeaderAdmin({
-  sidebarOpen,
-  setSidebarOpen,
-  title,
-}) {
-
+export default function HeaderAdmin({ sidebarOpen, setSidebarOpen, title }) {
   const [user, setUser] = useState(null);
 
   // BUSCAR USUÁRIO AUTENTICADO
-
   useEffect(() => {
     const fetchCurrentUser = async () => {
       try {
@@ -31,16 +25,12 @@ export default function HeaderAdmin({
   }, []);
 
   // NOME DO USUÁRIO
-
   const userName =
-    [user?.first_name, user?.last_name]
-      .filter(Boolean)
-      .join(" ") ||
+    [user?.first_name, user?.last_name].filter(Boolean).join(" ") ||
     user?.username ||
     "Administrador";
 
   // TIPO DE CONTA
-
   const userRole = user?.is_superuser
     ? "Super Administrador"
     : user?.is_admin
@@ -50,16 +40,15 @@ export default function HeaderAdmin({
   return (
     <header
       className="
-        bg-blue-900/95
-        backdrop-blur-md
-        text-slate-50
+        fixed left-0 right-0 top-0 z-30
+        flex h-16 items-center justify-between
         border-b border-blue-800/60
-        fixed top-0 right-0 left-0 md:left-64
-        h-16
-        flex items-center justify-between
+        bg-blue-900/95
         px-6
-        z-30
+        text-slate-50
+        backdrop-blur-md
         transition-all duration-300
+        md:left-64
       "
     >
       {/* LEFT */}
@@ -68,28 +57,29 @@ export default function HeaderAdmin({
         <button
           type="button"
           className="
-            md:hidden
-            text-lg
-            text-slate-300
-            hover:text-slate-50
+            cursor-pointer p-1
+            text-lg text-slate-300
             transition-colors
-            cursor-pointer
-            p-1
+            hover:text-slate-50
+            md:hidden
           "
           onClick={() => setSidebarOpen(!sidebarOpen)}
           aria-label="Abrir menu"
         >
-          <i className="fas fa-bars-staggered"></i>
+          <i className="fas fa-bars-staggered" />
         </button>
 
-        <div className="hidden sm:block h-6 w-px bg-blue-800/80"></div>
+        {/* SEPARADOR */}
+        <div className="hidden h-6 w-px bg-blue-800/80 sm:block" />
 
+        {/* TÍTULO */}
         <div>
-          <h2 className="text-base font-bold text-slate-50 tracking-tight">
+          <h2 className="text-base font-bold tracking-tight text-slate-50">
             {title}
           </h2>
-          <p className="hidden md:block text-[10px] text-sky-400/80 uppercase tracking-wider font-semibold">
-            Condomínio Kizomba
+
+          <p className="hidden text-[10px] font-semibold uppercase tracking-wider text-sky-400/80 md:block">
+            Sistema de Gestão de Acesso
           </p>
         </div>
       </div>
@@ -98,31 +88,34 @@ export default function HeaderAdmin({
       <div className="flex items-center gap-4">
         {/* USER INFO */}
         <div className="flex items-center gap-3">
-          <div className="text-right hidden sm:block">
-            <p className="text-sm text-slate-50 font-bold leading-tight">
+          <div className="hidden text-right sm:block">
+            <p className="text-sm font-bold leading-tight text-slate-50">
               {userName}
             </p>
-            <p className="text-[10px] text-sky-400/80 uppercase font-bold tracking-wider">
+
+            <p className="text-[10px] font-bold uppercase tracking-wider text-sky-400/80">
               {userRole}
             </p>
           </div>
 
+          {/* PERFIL */}
           <Link
             to="/dashboard/admin/perfil"
             className="
-              w-9 h-9
+              flex h-9 w-9
+              cursor-pointer items-center justify-center
+              rounded-full
+              border border-blue-800/40
               bg-slate-50
               text-blue-900
-              rounded-lg
-              flex items-center justify-center
-              hover:bg-blue-800 hover:text-slate-50
-              transition-all duration-200
               shadow-sm
-              border border-blue-800/40
+              transition-colors duration-200
+              hover:bg-blue-800
+              hover:text-slate-50
             "
             aria-label="Perfil do administrador"
           >
-            <i className="fas fa-user-shield text-sm"></i>
+            <i className="fas fa-user-shield text-sm" />
           </Link>
         </div>
       </div>

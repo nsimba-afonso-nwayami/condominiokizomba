@@ -40,21 +40,13 @@ export default function Login() {
         refresh: response.refresh,
       });
 
-      // Buscar informações do usuário autenticado
       const user = await getCurrentUser();
-
-      //console.log("[Login] USUÁRIO AUTENTICADO:", user);
 
       toast.dismiss(loadingToast);
       toast.success("Login realizado com sucesso!");
 
       const from = location.state?.from?.pathname;
 
-      // ADMIN
-      /*if (user.is_admin || user.is_superuser) {
-        navigate(from || "/dashboard/admin/", { replace: true });
-        return;
-      }*/
       if (user.is_admin || user.is_superuser) {
         const destination = from?.startsWith("/dashboard/admin/")
           ? from
@@ -65,12 +57,9 @@ export default function Login() {
         return;
       }
 
-      // MORADOR
-      //navigate(from || "/my-dashboard", { replace: true });
-
       const destination = from?.startsWith("/my-dashboard")
-      ? from
-      : "/my-dashboard";
+        ? from
+        : "/my-dashboard";
 
       navigate(destination, { replace: true });
     } catch (error) {
@@ -79,54 +68,79 @@ export default function Login() {
       toast.dismiss(loadingToast);
 
       if (error.response?.status === 401) {
-        toast.error("Nome de usuário ou palavra-passe inválidos.");
+        toast.error(
+          "Nome de usuário ou palavra-passe inválidos. / Invalid username or password.",
+        );
         return;
       }
 
       if (error.response?.status === 400) {
         toast.error(
           error.response?.data?.detail ||
-            "Os dados enviados são inválidos.",
+            "Os dados enviados são inválidos. / The submitted data is invalid.",
         );
         return;
       }
 
-      toast.error("Não foi possível realizar o login. Tente novamente.");
+      toast.error(
+        "Não foi possível realizar o login. Tente novamente. / Unable to sign in. Please try again.",
+      );
     }
   };
 
   return (
     <>
-      <title>Entrar | Condomínio Kizomba</title>
+      <title>Entrar | Sistema de QR Code</title>
 
       <section
-        className="relative flex min-h-screen items-center justify-center bg-cover bg-center px-6 py-10"
+        className="relative flex min-h-screen items-center justify-center overflow-hidden bg-slate-950 bg-cover bg-center px-6 py-10"
         style={{
           backgroundImage: `url(${LoginBg})`,
         }}
       >
         {/* Overlay */}
-        <div className="absolute inset-0 bg-slate-950/80" />
+        <div className="absolute inset-0 bg-slate-950/85" />
 
-        {/* Container */}
+        {/* Gradiente */}
+        <div className="absolute inset-0 bg-linear-to-br from-slate-950 via-slate-950/90 to-blue-950/70" />
+
+        {/* Conteúdo */}
         <div className="relative z-10 w-full max-w-md">
-          {/* Cabeçalho */}
-          <div className="mb-6 text-center">
-            <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-blue-700">
-              <i className="fa-solid fa-qrcode text-3xl text-white" />
-            </div>
+          {/* Introdução */}
+          <div className="mb-7 text-center">
+            <p className="text-sm font-semibold text-white">
+              Sistema de Gestão de Acesso
+            </p>
 
-            <h1 className="text-3xl font-bold text-white">
-              Condomínio <span className="text-sky-600">Kizomba</span>
+            <p className="mt-1 text-xs text-slate-500">
+              QR Code Access Management System
+            </p>
+
+            <h1 className="mt-5 text-3xl font-bold tracking-tight text-white sm:text-4xl">
+              Entrar no sistema
             </h1>
 
-            <p className="mt-2 text-sm text-slate-300">
-              Entre na sua conta para gerar o QR Code
+            <p className="mt-2 text-sm text-slate-400">
+              Aceda à plataforma para gerar e gerir QR Codes.
+            </p>
+
+            <p className="mt-1 text-xs text-slate-500">
+              Access the platform to generate and manage QR Codes.
             </p>
           </div>
 
           {/* Formulário */}
           <div className="rounded-2xl border border-white/10 bg-slate-900/90 p-6 backdrop-blur-md sm:p-8">
+            <div className="mb-6 text-center">
+              <h2 className="text-base font-bold text-white">
+                Autenticação / Authentication
+              </h2>
+
+              <p className="mt-1 text-xs text-slate-500">
+                Introduza os seus dados de acesso. / Enter your login details.
+              </p>
+            </div>
+
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
               {/* Nome de usuário */}
               <div>
@@ -134,7 +148,7 @@ export default function Login() {
                   htmlFor="username"
                   className="mb-2 block text-sm font-medium text-slate-200"
                 >
-                  Nome de usuário
+                  Nome de usuário / Username
                 </label>
 
                 <div className="relative">
@@ -143,7 +157,7 @@ export default function Login() {
                   <input
                     id="username"
                     type="text"
-                    placeholder="Digite o seu nome de usuário"
+                    placeholder="Digite o seu nome de usuário / Enter your username"
                     autoComplete="username"
                     disabled={isSubmitting}
                     {...register("username")}
@@ -156,8 +170,7 @@ export default function Login() {
                 </div>
 
                 {errors.username && (
-                  <p className="mt-2 flex items-center gap-1.5 text-xs text-red-400">
-                    <i className="fa-solid fa-circle-exclamation" />
+                  <p className="mt-2 text-xs text-red-400">
                     {errors.username.message}
                   </p>
                 )}
@@ -165,20 +178,13 @@ export default function Login() {
 
               {/* Palavra-passe */}
               <div>
-                <div className="mb-2 flex items-center justify-between">
+                <div className="mb-2 flex items-center justify-between gap-3">
                   <label
                     htmlFor="password"
                     className="block text-sm font-medium text-slate-200"
                   >
-                    Palavra-passe
+                    Palavra-passe / Password
                   </label>
-
-                  <Link
-                    to="/recuperar-senha"
-                    className="text-xs font-medium text-sky-600 transition hover:text-sky-500"
-                  >
-                    Esqueceu a senha?
-                  </Link>
                 </div>
 
                 <div className="relative">
@@ -187,7 +193,7 @@ export default function Login() {
                   <input
                     id="password"
                     type="password"
-                    placeholder="Digite a sua palavra-passe"
+                    placeholder="Digite a sua palavra-passe / Enter your password"
                     autoComplete="current-password"
                     disabled={isSubmitting}
                     {...register("password")}
@@ -200,8 +206,7 @@ export default function Login() {
                 </div>
 
                 {errors.password && (
-                  <p className="mt-2 flex items-center gap-1.5 text-xs text-red-400">
-                    <i className="fa-solid fa-circle-exclamation" />
+                  <p className="mt-2 text-xs text-red-400">
                     {errors.password.message}
                   </p>
                 )}
@@ -211,33 +216,33 @@ export default function Login() {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="flex w-full cursor-pointer items-center justify-center gap-3 rounded-xl bg-blue-800 px-5 py-3.5 text-sm font-semibold text-white transition-all duration-300 hover:-translate-y-0.5 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2 focus:ring-offset-slate-900 disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:translate-y-0"
+                className="flex w-full cursor-pointer items-center justify-center gap-3 rounded-xl bg-blue-800 px-5 py-3.5 text-sm font-semibold text-white transition-all duration-300 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2 focus:ring-offset-slate-900 disabled:cursor-not-allowed disabled:opacity-60"
               >
                 {isSubmitting ? (
                   <>
                     <i className="fa-solid fa-spinner fa-spin" />
-                    Processando...
+                    Processando... / Processing...
                   </>
                 ) : (
-                  <>
-                    <i className="fa-solid fa-right-to-bracket" />
-                    Entrar
-                  </>
+                  "Entrar / Sign in"
                 )}
               </button>
             </form>
 
             {/* Voltar */}
-            <div className="mt-6 border-t border-slate-800 pt-5 text-center">
+            <div className="mt-6 border-t border-slate-800 pt-5">
               <Link
                 to="/"
-                className="inline-flex cursor-pointer items-center gap-2 text-sm text-slate-400 transition hover:text-white"
+                className="flex cursor-pointer items-center justify-center text-xs text-slate-500 transition hover:text-slate-300"
               >
-                <i className="fa-solid fa-arrow-left text-xs" />
-                Voltar para a página inicial
+                Voltar à página inicial / Back to home
               </Link>
             </div>
           </div>
+
+          <p className="mt-6 text-center text-[11px] text-slate-600">
+            Sistema de Gestão de Acesso por QR Code
+          </p>
         </div>
       </section>
     </>

@@ -26,8 +26,9 @@ export default function PublicEvent() {
           convidados: data.convidado,
         });
       } catch (error) {
-        //console.error("Erro ao carregar evento:", error);
-        toast.error("Não foi possível carregar o evento.");
+        toast.error(
+          "Não foi possível carregar o evento. / Unable to load the event.",
+        );
       } finally {
         setLoading(false);
       }
@@ -40,10 +41,8 @@ export default function PublicEvent() {
     return (
       <section className="flex min-h-screen items-center justify-center bg-slate-50 px-6">
         <div className="text-center">
-          <i className="fa-solid fa-spinner fa-spin text-3xl text-blue-700" />
-
-          <p className="mt-4 text-sm text-slate-500">
-            Carregando dados do evento...
+          <p className="text-sm font-medium text-slate-500">
+            Carregando dados do evento... / Loading event data...
           </p>
         </div>
       </section>
@@ -54,17 +53,24 @@ export default function PublicEvent() {
     return (
       <section className="flex min-h-screen items-center justify-center bg-slate-50 px-6">
         <div className="w-full max-w-md rounded-2xl border border-slate-200 bg-white p-8 text-center">
-          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-red-50 text-red-600">
-            <i className="fa-solid fa-circle-exclamation text-2xl" />
-          </div>
+          <p className="text-4xl font-black text-slate-300">404</p>
 
-          <h1 className="mt-5 text-xl font-bold text-slate-900">
+          <h1 className="mt-4 text-xl font-bold text-slate-900">
             Evento não encontrado
           </h1>
 
-          <p className="mt-2 text-sm text-slate-500">
+          <p className="mt-1 text-sm font-medium text-slate-500">
+            Event not found
+          </p>
+
+          <p className="mt-4 text-sm leading-6 text-slate-500">
             O evento associado a este QR Code não existe ou já não está
             disponível.
+          </p>
+
+          <p className="mt-1 text-xs leading-5 text-slate-400">
+            The event associated with this QR Code does not exist or is no
+            longer available.
           </p>
         </div>
       </section>
@@ -73,81 +79,82 @@ export default function PublicEvent() {
 
   return (
     <>
-      <title>{event.tipoEvento} | Condomínio Kizomba</title>
+      <title>{event.tipoEvento} | Sistema de QR Code</title>
 
       <section className="min-h-screen bg-slate-50 px-6 py-10">
         <div className="mx-auto max-w-2xl">
-          {/* HEADER */}
-          <div className="mb-6 text-center">
-            <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-blue-700 text-white">
-              <i className="fa-solid fa-qrcode text-2xl" />
-            </div>
+          {/* CABEÇALHO */}
+          <div className="mb-8 text-center">
+            <p className="text-sm font-semibold text-blue-800">
+              Sistema de Gestão de Acesso
+            </p>
 
-            <h1 className="mt-4 text-2xl font-bold text-slate-900">
-              Condomínio Kizomba
+            <p className="mt-1 text-xs text-slate-400">
+              QR Code Access Management System
+            </p>
+
+            <h1 className="mt-5 text-2xl font-bold tracking-tight text-slate-900">
+              Dados do evento
             </h1>
 
-            <p className="mt-1 text-sm text-slate-500">
-              Dados do evento
-            </p>
+            <p className="mt-1 text-sm text-slate-500">Event information</p>
           </div>
 
           {/* EVENTO */}
           <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white">
-            <div className="border-b border-slate-200 bg-blue-800 px-6 py-5 text-white">
-              <p className="text-xs font-semibold uppercase tracking-wider text-blue-100">
-                Tipo de evento
+            <div className="border-b border-slate-200 px-6 py-6">
+              <p className="text-xs font-bold uppercase tracking-wider text-blue-700">
+                Tipo de evento / Event type
               </p>
 
-              <h2 className="mt-1 text-xl font-bold">
+              <h2 className="mt-2 text-xl font-bold text-slate-900">
                 {event.tipoEvento}
               </h2>
             </div>
 
-            <div className="grid gap-5 p-6 sm:grid-cols-2">
-              <EventInfo
-                icon="fa-solid fa-user"
-                label="Morador"
-                value={event.morador}
-              />
+            {/* DADOS */}
+            <div className="grid gap-x-8 gap-y-6 p-6 sm:grid-cols-2">
+              <EventInfo label="Morador / Resident" value={event.morador} />
+
+              <EventInfo label="Local / Location" value={event.local} />
+
+              <EventInfo label="Data / Date" value={formatDate(event.data)} />
 
               <EventInfo
-                icon="fa-solid fa-location-dot"
-                label="Local"
-                value={event.local}
-              />
-
-              <EventInfo
-                icon="fa-solid fa-calendar"
-                label="Data"
-                value={formatDate(event.data)}
-              />
-
-              <EventInfo
-                icon="fa-solid fa-clock"
-                label="Horário"
+                label="Horário / Time"
                 value={`${event.hora} - ${event.horaFim}`}
               />
 
               <div className="sm:col-span-2">
                 <EventInfo
-                  icon="fa-solid fa-users"
-                  label="Convidados"
+                  label="Convidados / Guests"
                   value={event.convidados}
                 />
               </div>
             </div>
 
-            <div className="border-t border-slate-200 bg-slate-50 px-6 py-4">
-              <div className="flex items-start gap-3">
-                <i className="fa-solid fa-circle-info mt-0.5 text-blue-700" />
+            {/* INFORMAÇÃO */}
+            <div className="border-t border-slate-200 bg-slate-50 px-6 py-5">
+              <p className="text-xs leading-5 text-slate-500">
+                Este QR Code está associado ao evento acima. Apresente estas
+                informações quando solicitado na entrada.
+              </p>
 
-                <p className="text-xs leading-relaxed text-slate-500">
-                  Este QR Code está associado ao evento acima. Apresente
-                  estas informações quando solicitado na entrada do
-                  condomínio.
-                </p>
-              </div>
+              <p className="mt-1 text-[11px] leading-5 text-slate-400">
+                This QR Code is associated with the event above. Present this
+                information when requested at the entrance.
+              </p>
+            </div>
+
+            {/* RODAPÉ */}
+            <div className="border-t border-slate-200 px-6 py-4 text-center">
+              <p className="text-xs font-semibold text-slate-500">
+                Sistema de Gestão de Acesso
+              </p>
+
+              <p className="mt-1 text-[11px] text-slate-400">
+                QR Code Access Management System
+              </p>
             </div>
           </div>
         </div>
@@ -156,16 +163,15 @@ export default function PublicEvent() {
   );
 }
 
-function EventInfo({ icon, label, value }) {
+function EventInfo({ label, value }) {
   return (
     <div>
-      <p className="text-xs font-bold uppercase tracking-wider text-slate-400">
-        <i className={`${icon} mr-2`} />
+      <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
         {label}
       </p>
 
       <p className="mt-2 text-sm font-semibold text-slate-800">
-        {value || "Não informado"}
+        {value || "Não informado / Not provided"}
       </p>
     </div>
   );

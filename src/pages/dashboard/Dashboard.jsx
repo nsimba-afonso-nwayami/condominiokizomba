@@ -38,8 +38,6 @@ export default function Dashboard() {
     },
   });
 
-  // BUSCAR USUÁRIO AUTENTICADO
-
   useEffect(() => {
     const fetchCurrentUser = async () => {
       try {
@@ -47,30 +45,10 @@ export default function Dashboard() {
 
         const response = await getCurrentUser();
 
-        /*console.log(
-          "[Dashboard] USUÁRIO AUTENTICADO:",
-          response,
-        );*/
-
         setUser(response);
       } catch (error) {
-        /*console.error(
-          "[Dashboard] ERRO AO BUSCAR USUÁRIO:",
-          error,
-        );
-
-        console.error(
-          "[Dashboard] STATUS:",
-          error.response?.status,
-        );
-
-        console.error(
-          "[Dashboard] RESPOSTA DA API:",
-          error.response?.data,
-        );*/
-
         toast.error(
-          "Não foi possível carregar os dados do usuário.",
+          "Não foi possível carregar os dados do usuário. / Unable to load user data.",
         );
       } finally {
         setIsUserLoading(false);
@@ -83,13 +61,17 @@ export default function Dashboard() {
   const handleLogout = () => {
     logout();
 
-    toast.success("Sessão terminada com sucesso.");
+    toast.success(
+      "Sessão terminada com sucesso. / Session ended successfully.",
+    );
 
     navigate("/login", { replace: true });
   };
 
   const handleGenerateQRCode = async (data) => {
-    const loadingToast = toast.loading("Cadastrando evento...");
+    const loadingToast = toast.loading(
+      "Cadastrando evento... / Registering event...",
+    );
 
     try {
       const payload = {
@@ -120,68 +102,57 @@ export default function Dashboard() {
       reset();
 
       toast.dismiss(loadingToast);
-      toast.success("Evento cadastrado com sucesso! Role a tela para baixo para ver o código gerado");
-    } catch (error) {
-      /*console.error("ERRO AO CADASTRAR EVENTO:", error);
-      console.error("RESPOSTA DA API:", error.response?.data);*/
 
+      toast.success(
+        "Evento cadastrado com sucesso! Role a tela para baixo para ver o código gerado. / Event registered successfully! Scroll down to view the generated code.",
+        { duration: 5000 },
+      );
+    } catch (error) {
       toast.dismiss(loadingToast);
 
-      toast.error("Não foi possível cadastrar o evento.");
+      toast.error(
+        "Não foi possível cadastrar o evento. / Unable to register the event.",
+      );
     }
   };
 
   return (
     <>
-      <title>Dashboard | Condomínio Kizomba</title>
+      <title>Dashboard | Sistema de QR Code</title>
 
       <section className="min-h-screen bg-slate-50">
         {/* HEADER */}
         <header className="border-b border-slate-200 bg-white">
           <div className="mx-auto flex max-w-5xl items-center justify-between gap-4 px-6 py-5">
-            <div className="flex items-center gap-3">
-              <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-blue-700 text-white">
-                <i className="fa-solid fa-qrcode text-xl" />
-              </div>
+            <div>
+              <h1 className="text-lg font-bold tracking-tight text-slate-900">
+                Sistema de Gestão de Acesso
+              </h1>
 
-              <div>
-                <h1 className="text-lg font-bold text-slate-900">
-                  Condomínio Kizomba
-                </h1>
-
-                <p className="text-xs text-slate-500">
-                  Gestão de QR Codes
-                </p>
-              </div>
+              <p className="text-xs text-slate-500">
+                QR Code Access Management System
+              </p>
             </div>
 
             <div className="flex items-center gap-3">
               {isUserLoading ? (
-                <>
-                  <div className="flex items-center justify-end gap-2">
-                    <i className="fa-solid fa-spinner fa-spin text-xs text-blue-700" />
-
-                    <p className="text-sm font-semibold text-slate-800">
-                      Carregando...
-                    </p>
-                  </div>
-
-                  <p className="text-xs text-slate-500">
-                    Morador
+                <div className="text-right">
+                  <p className="text-sm font-semibold text-slate-800">
+                    Carregando... / Loading...
                   </p>
-                </>
+
+                  <p className="text-xs text-slate-500">Morador / Resident</p>
+                </div>
               ) : (
-                <>
+                <div className="text-right">
                   <p className="text-sm font-semibold text-slate-800">
                     {user?.first_name || user?.last_name
                       ? `${user?.first_name || ""} ${user?.last_name || ""}`.trim()
                       : user?.username || "Morador"}
                   </p>
 
-                  <p className="text-xs text-slate-500">
-                    Morador 
-                  </p>
-                </>
+                  <p className="text-xs text-slate-500">Morador / Resident</p>
+                </div>
               )}
 
               <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-50 text-blue-800">
@@ -194,7 +165,8 @@ export default function Dashboard() {
                 className="flex cursor-pointer items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:border-red-200 hover:bg-red-50 hover:text-red-600"
               >
                 <i className="fa-solid fa-right-from-bracket" />
-                <span className="hidden sm:inline">Sair</span>
+
+                <span className="hidden sm:inline">Sair / Sign out</span>
               </button>
             </div>
           </div>
@@ -202,14 +174,16 @@ export default function Dashboard() {
 
         {/* CONTEÚDO */}
         <main className="mx-auto max-w-5xl px-6 py-8">
-          {/* TÍTULO */}
+          {/* INTRODUÇÃO */}
           <div className="mb-8">
-            <h2 className="text-2xl font-bold text-slate-900">
-              Gerar QR Code
-            </h2>
+            <h2 className="text-2xl font-bold text-slate-900">Gerar QR Code</h2>
 
             <p className="mt-1 text-sm text-slate-500">
               Preencha os dados do evento para gerar o QR Code de acesso.
+            </p>
+
+            <p className="mt-1 text-xs text-slate-400">
+              Fill in the event details to generate the access QR Code.
             </p>
           </div>
 
@@ -235,7 +209,7 @@ export default function Dashboard() {
                     <input
                       id="morador"
                       type="text"
-                      placeholder="Nome do morador"
+                      placeholder="Nome do morador / Resident name"
                       {...register("morador")}
                       className={`w-full rounded-xl border bg-white py-3.5 pl-11 pr-4 text-sm text-slate-800 outline-none transition placeholder:text-slate-400 focus:ring-2 ${
                         errors.morador
@@ -264,7 +238,11 @@ export default function Dashboard() {
                   <select
                     id="tipoEvento"
                     {...register("tipoEvento")}
-                    className="w-full cursor-pointer rounded-xl border border-slate-200 bg-white px-4 py-3.5 text-sm text-slate-700 outline-none transition focus:border-blue-600 focus:ring-2 focus:ring-blue-600/10"
+                    className={`w-full cursor-pointer rounded-xl border bg-white px-4 py-3.5 text-sm text-slate-700 outline-none transition focus:ring-2 ${
+                      errors.tipoEvento
+                        ? "border-red-500 focus:border-red-500 focus:ring-red-500/10"
+                        : "border-slate-200 focus:border-blue-600 focus:ring-blue-600/10"
+                    }`}
                   >
                     <option value="">
                       Selecione o tipo de evento / Select Event Type
@@ -274,9 +252,7 @@ export default function Dashboard() {
                       Aniversário / Birthday
                     </option>
 
-                    <option value="Reunião/Meeting">
-                      Reunião / Meeting
-                    </option>
+                    <option value="Reunião/Meeting">Reunião / Meeting</option>
 
                     <option value="Palestras/Lectures">
                       Palestras / Lectures
@@ -286,9 +262,7 @@ export default function Dashboard() {
                       Aulas para criança / Classes for children
                     </option>
 
-                    <option value="Jogos/Games">
-                      Jogos / Games
-                    </option>
+                    <option value="Jogos/Games">Jogos / Games</option>
                   </select>
 
                   {errors.tipoEvento && (
@@ -311,7 +285,11 @@ export default function Dashboard() {
                     id="data"
                     type="date"
                     {...register("data")}
-                    className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3.5 text-sm text-slate-700 outline-none transition focus:border-blue-600 focus:ring-2 focus:ring-blue-600/10"
+                    className={`w-full rounded-xl border bg-white px-4 py-3.5 text-sm text-slate-700 outline-none transition focus:ring-2 ${
+                      errors.data
+                        ? "border-red-500 focus:border-red-500 focus:ring-red-500/10"
+                        : "border-slate-200 focus:border-blue-600 focus:ring-blue-600/10"
+                    }`}
                   />
 
                   {errors.data && (
@@ -334,7 +312,11 @@ export default function Dashboard() {
                     id="hora"
                     type="time"
                     {...register("hora")}
-                    className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3.5 text-sm text-slate-700 outline-none transition focus:border-blue-600 focus:ring-2 focus:ring-blue-600/10"
+                    className={`w-full rounded-xl border bg-white px-4 py-3.5 text-sm text-slate-700 outline-none transition focus:ring-2 ${
+                      errors.hora
+                        ? "border-red-500 focus:border-red-500 focus:ring-red-500/10"
+                        : "border-slate-200 focus:border-blue-600 focus:ring-blue-600/10"
+                    }`}
                   />
 
                   {errors.hora && (
@@ -357,7 +339,11 @@ export default function Dashboard() {
                     id="horaFim"
                     type="time"
                     {...register("horaFim")}
-                    className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3.5 text-sm text-slate-700 outline-none transition focus:border-blue-600 focus:ring-2 focus:ring-blue-600/10"
+                    className={`w-full rounded-xl border bg-white px-4 py-3.5 text-sm text-slate-700 outline-none transition focus:ring-2 ${
+                      errors.horaFim
+                        ? "border-red-500 focus:border-red-500 focus:ring-red-500/10"
+                        : "border-slate-200 focus:border-blue-600 focus:ring-blue-600/10"
+                    }`}
                   />
 
                   {errors.horaFim && (
@@ -379,7 +365,11 @@ export default function Dashboard() {
                   <select
                     id="local"
                     {...register("local")}
-                    className="w-full cursor-pointer rounded-xl border border-slate-200 bg-white px-4 py-3.5 text-sm text-slate-700 outline-none transition focus:border-blue-600 focus:ring-2 focus:ring-blue-600/10"
+                    className={`w-full cursor-pointer rounded-xl border bg-white px-4 py-3.5 text-sm text-slate-700 outline-none transition focus:ring-2 ${
+                      errors.local
+                        ? "border-red-500 focus:border-red-500 focus:ring-red-500/10"
+                        : "border-slate-200 focus:border-blue-600 focus:ring-blue-600/10"
+                    }`}
                   >
                     <option value="">
                       Selecione o local / Select location
@@ -397,9 +387,7 @@ export default function Dashboard() {
                       Residência / Residential
                     </option>
 
-                    <option value="Ginásio/ Gym">
-                      Ginásio / Gym
-                    </option>
+                    <option value="Ginásio/ Gym">Ginásio / Gym</option>
 
                     <option value="Campo Padel/ Padel court">
                       Campo de Padel / Padel court
@@ -433,9 +421,13 @@ export default function Dashboard() {
                   <textarea
                     id="convidados"
                     {...register("convidados")}
-                    placeholder="Escreva o nome dos convidados..."
+                    placeholder="Escreva o nome dos convidados / Enter guest names"
                     rows={4}
-                    className="w-full resize-none rounded-xl border border-slate-200 bg-white px-4 py-3.5 text-sm text-slate-800 outline-none transition placeholder:text-slate-400 focus:border-blue-600 focus:ring-2 focus:ring-blue-600/10"
+                    className={`w-full resize-none rounded-xl border bg-white px-4 py-3.5 text-sm text-slate-800 outline-none transition placeholder:text-slate-400 focus:ring-2 ${
+                      errors.convidados
+                        ? "border-red-500 focus:border-red-500 focus:ring-red-500/10"
+                        : "border-slate-200 focus:border-blue-600 focus:ring-blue-600/10"
+                    }`}
                   />
 
                   {errors.convidados && (
@@ -456,12 +448,12 @@ export default function Dashboard() {
                   {isSubmitting ? (
                     <>
                       <i className="fa-solid fa-spinner fa-spin" />
-                      Gerando...
+                      Gerando... / Generating...
                     </>
                   ) : (
                     <>
                       <i className="fa-solid fa-qrcode" />
-                      Gerar QR Code
+                      Gerar QR Code / Generate QR Code
                     </>
                   )}
                 </button>
@@ -473,16 +465,16 @@ export default function Dashboard() {
           {generatedEvent && (
             <div className="mt-8 rounded-2xl border border-slate-200 bg-white p-6 md:p-8">
               <div className="text-center">
-                <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-green-50 text-green-600">
-                  <i className="fa-solid fa-check" />
-                </div>
-
-                <h3 className="mt-4 text-xl font-bold text-slate-900">
+                <h3 className="text-xl font-bold text-slate-900">
                   QR Code gerado com sucesso
                 </h3>
 
                 <p className="mt-1 text-sm text-slate-500">
                   Apresente este QR Code para leitura na entrada do condomínio.
+                </p>
+
+                <p className="mt-1 text-xs text-slate-400">
+                  Present this QR Code at the condominium entrance.
                 </p>
               </div>
 
@@ -490,35 +482,40 @@ export default function Dashboard() {
               <div className="mx-auto mt-6 max-w-md rounded-xl bg-slate-50 p-5">
                 <div className="space-y-3 text-sm">
                   <div className="flex justify-between gap-4">
-                    <span className="text-slate-500">Morador</span>
+                    <span className="text-slate-500">Morador / Resident</span>
+
                     <span className="font-semibold text-slate-800">
                       {generatedEvent.morador}
                     </span>
                   </div>
 
                   <div className="flex justify-between gap-4">
-                    <span className="text-slate-500">Evento</span>
-                    <span className="font-semibold text-slate-800">
+                    <span className="text-slate-500">Evento / Event</span>
+
+                    <span className="text-right font-semibold text-slate-800">
                       {generatedEvent.tipoEvento}
                     </span>
                   </div>
 
                   <div className="flex justify-between gap-4">
-                    <span className="text-slate-500">Data</span>
+                    <span className="text-slate-500">Data / Date</span>
+
                     <span className="font-semibold text-slate-800">
                       {formatDate(generatedEvent.data)}
                     </span>
                   </div>
 
                   <div className="flex justify-between gap-4">
-                    <span className="text-slate-500">Horário</span>
+                    <span className="text-slate-500">Horário / Time</span>
+
                     <span className="font-semibold text-slate-800">
                       {generatedEvent.hora} - {generatedEvent.horaFim}
                     </span>
                   </div>
 
                   <div className="flex justify-between gap-4">
-                    <span className="text-slate-500">Local</span>
+                    <span className="text-slate-500">Local / Location</span>
+
                     <span className="text-right font-semibold text-slate-800">
                       {generatedEvent.local}
                     </span>
@@ -541,7 +538,7 @@ export default function Dashboard() {
                   className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-xl bg-blue-800 px-6 py-3.5 text-sm font-semibold text-white transition hover:bg-blue-700 sm:w-auto"
                 >
                   <i className="fa-solid fa-file-pdf" />
-                  Baixar PDF
+                  Baixar PDF / Download PDF
                 </button>
               </div>
             </div>
