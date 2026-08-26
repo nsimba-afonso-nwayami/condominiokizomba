@@ -70,6 +70,20 @@ export const registerUser = async (userData) => {
   }
 };
 
+export const updateUser = async (userId, userData) => {
+  // eslint-disable-next-line no-useless-catch
+  try {
+    const response = await api.patch(
+      `/users/${userId}/`,
+      userData,
+    );
+
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
 export const resetUserPassword = async (
   userId,
   passwordData,
