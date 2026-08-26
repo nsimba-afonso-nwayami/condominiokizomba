@@ -73,7 +73,7 @@ export const registerUser = async (userData) => {
 export const updateUser = async (userId, userData) => {
   // eslint-disable-next-line no-useless-catch
   try {
-    const response = await api.patch(
+    const response = await api.put(
       `/users/${userId}/`,
       userData,
     );
