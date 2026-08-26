@@ -10,6 +10,7 @@ import ModalSmall from "./components/ModalSmall";
 import {
   getUsers,
   registerUser,
+  updateUser,
   resetUserPassword,
 } from "../../services/userService";
 
@@ -23,16 +24,15 @@ export default function UsuariosAdmin() {
   const [search, setSearch] = useState("");
 
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isResetModalOpen, setIsResetModalOpen] = useState(false);
 
   const [selectedUser, setSelectedUser] = useState(null);
 
   const [isResetting, setIsResetting] = useState(false);
+  const [isUpdating, setIsUpdating] = useState(false);
 
-  // =========================================================
   // FORMULÁRIO DE CADASTRO
-  // REGISTRATION FORM
-  // =========================================================
 
   const {
     register,
@@ -50,10 +50,23 @@ export default function UsuariosAdmin() {
     },
   });
 
-  // =========================================================
+  // FORMULÁRIO DE EDIÇÃO
+
+  const {
+    register: registerEdit,
+    handleSubmit: handleSubmitEdit,
+    reset: resetEdit,
+    formState: { errors: editErrors },
+  } = useForm({
+    defaultValues: {
+      username: "",
+      email: "",
+      first_name: "",
+      last_name: "",
+    },
+  });
+
   // FORMULÁRIO DE RESET DE SENHA
-  // PASSWORD RESET FORM
-  // =========================================================
 
   const {
     register: registerReset,
@@ -68,10 +81,7 @@ export default function UsuariosAdmin() {
     },
   });
 
-  // =========================================================
   // BUSCAR USUÁRIOS
-  // FETCH USERS
-  // =========================================================
 
   useEffect(() => {
     fetchUsers();
@@ -105,10 +115,7 @@ export default function UsuariosAdmin() {
     }
   };
 
-  // =========================================================
   // PESQUISA
-  // SEARCH
-  // =========================================================
 
   const filteredUsers = useMemo(() => {
     const searchValue = search.trim().toLowerCase();
@@ -135,10 +142,7 @@ export default function UsuariosAdmin() {
     });
   }, [users, search]);
 
-  // =========================================================
   // ABRIR MODAL DE CADASTRO
-  // OPEN REGISTRATION MODAL
-  // =========================================================
 
   const handleOpenCreate = () => {
     reset({
@@ -152,10 +156,7 @@ export default function UsuariosAdmin() {
     setIsModalOpen(true);
   };
 
-  // =========================================================
   // FECHAR MODAL DE CADASTRO
-  // CLOSE REGISTRATION MODAL
-  // =========================================================
 
   const handleCloseCreate = () => {
     if (isSubmitting) return;
@@ -171,10 +172,7 @@ export default function UsuariosAdmin() {
     });
   };
 
-  // =========================================================
   // CADASTRAR USUÁRIO
-  // REGISTER USER
-  // =========================================================
 
   const handleCreateUser = async (data) => {
     const loadingToast = toast.loading(
@@ -215,10 +213,84 @@ export default function UsuariosAdmin() {
     }
   };
 
-  // =========================================================
+  // ABRIR MODAL DE EDIÇÃO
+
+  const handleOpenEdit = (user) => {
+    setSelectedUser(user);
+
+    resetEdit({
+      username: user.username || "",
+      email: user.email || "",
+      first_name: user.first_name || "",
+      last_name: user.last_name || "",
+    });
+
+    setIsEditModalOpen(true);
+  };
+
+  // FECHAR MODAL DE EDIÇÃO
+
+  const handleCloseEdit = () => {
+    if (isUpdating) return;
+
+    setIsEditModalOpen(false);
+    setSelectedUser(null);
+
+    resetEdit({
+      username: "",
+      email: "",
+      first_name: "",
+      last_name: "",
+    });
+  };
+
+  // ATUALIZAR USUÁRIO
+
+  const handleUpdateUser = async (data) => {
+    if (!selectedUser) return;
+
+    const loadingToast = toast.loading(
+      "Atualizando usuário... / Updating user...",
+    );
+
+    try {
+      setIsUpdating(true);
+
+      const payload = {
+        username: data.username,
+        email: data.email,
+        first_name: data.first_name,
+        last_name: data.last_name,
+      };
+
+      await updateUser(selectedUser.id, payload);
+
+      await fetchUsers();
+
+      toast.dismiss(loadingToast);
+
+      toast.success(
+        "Usuário atualizado com sucesso! / User updated successfully!",
+        {
+          duration: 5000,
+        },
+      );
+
+      handleCloseEdit();
+    } catch (error) {
+      console.error("[UsuariosAdmin] ERRO AO ATUALIZAR USUÁRIO:", error);
+
+      toast.dismiss(loadingToast);
+
+      toast.error(
+        "Não foi possível atualizar o usuário. / Unable to update the user.",
+      );
+    } finally {
+      setIsUpdating(false);
+    }
+  };
+
   // ABRIR RESET DE SENHA
-  // OPEN PASSWORD RESET
-  // =========================================================
 
   const handleOpenReset = (user) => {
     console.log("[UsuariosAdmin] USUÁRIO SELECIONADO PARA RESET:", user);
@@ -233,10 +305,7 @@ export default function UsuariosAdmin() {
     setIsResetModalOpen(true);
   };
 
-  // =========================================================
   // FECHAR RESET DE SENHA
-  // CLOSE PASSWORD RESET
-  // =========================================================
 
   const handleCloseReset = () => {
     if (isResetting) return;
@@ -250,10 +319,7 @@ export default function UsuariosAdmin() {
     });
   };
 
-  // =========================================================
   // RESETAR SENHA
-  // RESET PASSWORD
-  // =========================================================
 
   const handleResetPassword = async (data) => {
     if (!selectedUser) return;
@@ -302,9 +368,7 @@ export default function UsuariosAdmin() {
       </title>
 
       <AdminLayout title="Usuários / Users">
-        {/* =====================================================
-            HEADER
-        ====================================================== */}
+        {/*  HEADER */}
 
         <section className="flex flex-col justify-between gap-4 border-b border-neutral-400/30 pb-4 sm:flex-row sm:items-center">
           <div>
@@ -328,9 +392,7 @@ export default function UsuariosAdmin() {
           </button>
         </section>
 
-        {/* =====================================================
-            PESQUISA
-        ====================================================== */}
+        {/* PESQUISA */}
 
         <section className="rounded-2xl border border-neutral-400/40 bg-neutral-50 p-5 shadow-sm">
           <div className="mb-4 flex items-center gap-2">
@@ -354,9 +416,7 @@ export default function UsuariosAdmin() {
           </div>
         </section>
 
-        {/* =====================================================
-            LISTAGEM
-        ====================================================== */}
+        {/* LISTAGEM */}
 
         <section className="overflow-hidden rounded-2xl border border-neutral-400/40 bg-neutral-50 shadow-sm">
           <div className="flex items-center justify-between border-b border-neutral-400/20 p-5">
@@ -437,16 +497,29 @@ export default function UsuariosAdmin() {
                       </td>
 
                       <td className="px-5 py-4">
-                        <div className="flex justify-end">
+                        <div className="flex justify-end gap-2">
                           {!user.is_admin && !user.is_superuser && (
-                            <button
-                              type="button"
-                              onClick={() => handleOpenReset(user)}
-                              title="Resetar senha / Reset password"
-                              className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-lg border border-blue-100 bg-blue-50 text-blue-700 transition hover:bg-blue-100"
-                            >
-                              <i className="fas fa-key text-xs" />
-                            </button>
+                            <>
+                              {/* EDITAR */}
+                              <button
+                                type="button"
+                                onClick={() => handleOpenEdit(user)}
+                                title="Editar usuário / Edit user"
+                                className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-lg border border-blue-100 bg-blue-50 text-blue-700 transition hover:bg-blue-100"
+                              >
+                                <i className="fas fa-pen text-xs" />
+                              </button>
+
+                              {/* RESETAR SENHA */}
+                              <button
+                                type="button"
+                                onClick={() => handleOpenReset(user)}
+                                title="Resetar senha / Reset password"
+                                className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-lg border border-blue-100 bg-blue-50 text-blue-700 transition hover:bg-blue-100"
+                              >
+                                <i className="fas fa-key text-xs" />
+                              </button>
+                            </>
                           )}
                         </div>
                       </td>
@@ -458,9 +531,7 @@ export default function UsuariosAdmin() {
           )}
         </section>
 
-        {/* =====================================================
-            MODAL — NOVO USUÁRIO
-        ====================================================== */}
+        {/* MODAL — NOVO USUÁRIO */}
 
         <Modal
           isOpen={isModalOpen}
@@ -639,9 +710,176 @@ export default function UsuariosAdmin() {
           </form>
         </Modal>
 
-        {/* =====================================================
-            MODAL — RESETAR SENHA
-        ====================================================== */}
+        {/* MODAL — EDITAR USUÁRIO */}
+
+        <Modal
+          isOpen={isEditModalOpen}
+          onClose={handleCloseEdit}
+          title="Editar Usuário / Edit User"
+          icon="fas fa-user-pen"
+        >
+          <form
+            onSubmit={handleSubmitEdit(handleUpdateUser)}
+            className="space-y-6"
+          >
+            <div>
+              <h3 className="text-lg font-bold text-slate-900">
+                Dados do usuário / User information
+              </h3>
+
+              <p className="mt-1 text-sm text-slate-500">
+                Atualize os dados do usuário. / Update the user's information.
+              </p>
+            </div>
+
+            <div className="grid gap-5 md:grid-cols-2">
+              {/* USERNAME */}
+              <div>
+                <label
+                  htmlFor="edit-username"
+                  className="mb-2 block text-sm font-semibold text-slate-700"
+                >
+                  Nome de usuário / Username
+                </label>
+
+                <input
+                  id="edit-username"
+                  type="text"
+                  placeholder="Nome de usuário / Username"
+                  {...registerEdit("username", {
+                    required:
+                      "O username é obrigatório. / Username is required.",
+                  })}
+                  className={`w-full rounded-xl border bg-white px-4 py-3.5 text-sm text-slate-800 outline-none transition focus:ring-2 ${
+                    editErrors.username
+                      ? "border-red-500 focus:border-red-500 focus:ring-red-500/10"
+                      : "border-slate-200 focus:border-blue-600 focus:ring-blue-600/10"
+                  }`}
+                />
+
+                {editErrors.username && (
+                  <p className="mt-2 text-xs text-red-500">
+                    {editErrors.username.message}
+                  </p>
+                )}
+              </div>
+
+              {/* EMAIL */}
+              <div>
+                <label
+                  htmlFor="edit-email"
+                  className="mb-2 block text-sm font-semibold text-slate-700"
+                >
+                  Email
+                </label>
+
+                <input
+                  id="edit-email"
+                  type="email"
+                  placeholder="usuario@email.com"
+                  {...registerEdit("email", {
+                    required: "O email é obrigatório. / Email is required.",
+                  })}
+                  className={`w-full rounded-xl border bg-white px-4 py-3.5 text-sm text-slate-800 outline-none transition focus:ring-2 ${
+                    editErrors.email
+                      ? "border-red-500 focus:border-red-500 focus:ring-red-500/10"
+                      : "border-slate-200 focus:border-blue-600 focus:ring-blue-600/10"
+                  }`}
+                />
+
+                {editErrors.email && (
+                  <p className="mt-2 text-xs text-red-500">
+                    {editErrors.email.message}
+                  </p>
+                )}
+              </div>
+
+              {/* FIRST NAME */}
+              <div>
+                <label
+                  htmlFor="edit-first-name"
+                  className="mb-2 block text-sm font-semibold text-slate-700"
+                >
+                  Primeiro Nome / First Name
+                </label>
+
+                <input
+                  id="edit-first-name"
+                  type="text"
+                  placeholder="Primeiro nome / First name"
+                  {...registerEdit("first_name", {
+                    required:
+                      "O primeiro nome é obrigatório. / First name is required.",
+                  })}
+                  className={`w-full rounded-xl border bg-white px-4 py-3.5 text-sm text-slate-800 outline-none transition focus:ring-2 ${
+                    editErrors.first_name
+                      ? "border-red-500 focus:border-red-500 focus:ring-red-500/10"
+                      : "border-slate-200 focus:border-blue-600 focus:ring-blue-600/10"
+                  }`}
+                />
+
+                {editErrors.first_name && (
+                  <p className="mt-2 text-xs text-red-500">
+                    {editErrors.first_name.message}
+                  </p>
+                )}
+              </div>
+
+              {/* LAST NAME */}
+              <div>
+                <label
+                  htmlFor="edit-last-name"
+                  className="mb-2 block text-sm font-semibold text-slate-700"
+                >
+                  Último Nome / Last Name
+                </label>
+
+                <input
+                  id="edit-last-name"
+                  type="text"
+                  placeholder="Último nome / Last name"
+                  {...registerEdit("last_name", {
+                    required:
+                      "O último nome é obrigatório. / Last name is required.",
+                  })}
+                  className={`w-full rounded-xl border bg-white px-4 py-3.5 text-sm text-slate-800 outline-none transition focus:ring-2 ${
+                    editErrors.last_name
+                      ? "border-red-500 focus:border-red-500 focus:ring-red-500/10"
+                      : "border-slate-200 focus:border-blue-600 focus:ring-blue-600/10"
+                  }`}
+                />
+
+                {editErrors.last_name && (
+                  <p className="mt-2 text-xs text-red-500">
+                    {editErrors.last_name.message}
+                  </p>
+                )}
+              </div>
+            </div>
+
+            <div className="flex justify-end border-t border-slate-200 pt-5">
+              <button
+                type="submit"
+                disabled={isUpdating}
+                className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-xl bg-blue-800 px-6 py-3.5 text-sm font-semibold text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
+              >
+                {isUpdating ? (
+                  <>
+                    <i className="fas fa-spinner fa-spin" />
+                    Atualizando... / Updating...
+                  </>
+                ) : (
+                  <>
+                    <i className="fas fa-user-pen" />
+                    Atualizar usuário / Update user
+                  </>
+                )}
+              </button>
+            </div>
+          </form>
+        </Modal>
+
+        {/* MODAL — RESETAR SENHA */}
 
         <ModalSmall
           isOpen={isResetModalOpen}
